@@ -47,7 +47,7 @@ export default function LessonsToursSpecifications({
   return (
     <>
       {/* Lessons & Tours Specifications */}
-      <div className="bg-gray-100 p-3 sm:p-4 mb-1">
+      <div className="bg-gray-100 p-3 sm:p-4 mb-1 rounded-lg">
         <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Lessons & Tours Specifications</h2>
       </div>
 

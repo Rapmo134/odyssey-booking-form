@@ -55,7 +55,7 @@ export default function ParticipantForm({
   return (
     <>
       {/* Personal Information */}
-      <div className="bg-gray-100 p-3 sm:p-4 mb-1">
+      <div className="bg-gray-100 p-3 sm:p-4 mb-1 rounded-lg">
         <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Personal Information</h2>
       </div>
       
@@ -199,7 +199,7 @@ export default function ParticipantForm({
             {/* === Peer/Group Recommendations Section === */}
             <div className="max-w-6xl">
               <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold text-sky-700 mb-4">Recommended Peer/Group Packages</h3>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-4">Recommended Peer/Group Packages</h3>
                 <div className="space-y-4">
                   {/* Placeholder for peer/group recommendations */}
                 </div>

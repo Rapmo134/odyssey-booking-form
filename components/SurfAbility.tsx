@@ -45,10 +45,10 @@ export default function SurfAbility({ surfAbility, setSurfAbility, surfExperienc
   function AbilitySelect({ value, onChange }: { value: string, onChange: (v: string) => void }) {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-20 sm:w-24 min-w-[5rem] sm:min-w-[6rem] text-xs sm:text-sm">
+        <SelectTrigger className="w-24 sm:w-24 min-w-[5rem] sm:min-w-[6rem] text-xs sm:text-sm">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="w-20 sm:w-24 min-w-[5rem] sm:min-w-[6rem]">
+        <SelectContent className="w-24 sm:w-24 min-w-[5rem] sm:min-w-[6rem]">
           <SelectItem value="Good">Good</SelectItem>
           <SelectItem value="Average">Average</SelectItem>
           <SelectItem value="Poor">Poor</SelectItem>
@@ -110,17 +110,18 @@ export default function SurfAbility({ surfAbility, setSurfAbility, surfExperienc
           <span className="text-xs sm:text-sm text-gray-600">(Choose one : GOOD / AVERAGE / POOR)</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {surfAbilityItems.map((column, columnIndex) => (
-            <div key={columnIndex} className={`space-y-3 ${columnIndex === 2 ? 'sm:col-span-2 lg:col-span-1' : ''}`}>
-              {column.map((item) => (
-                <div key={item.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <span className="text-xs sm:text-sm">{item.label}</span>
-                  <AbilitySelect 
-                    value={surfAbility[item.key as keyof SurfAbilityState] as string} 
-                    onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, [item.key]: v}))} 
-                  />
-                </div>
-              ))}
+          {surfAbilityItems.flat().map((item) => (
+            <div
+              key={item.key}
+              className="flex flex-row items-center justify-between p-2 border rounded-md bg-white shadow-sm"
+            >
+              <span className="text-xs sm:text-sm max-md:mb-2">{item.label}</span>
+              <AbilitySelect
+                value={surfAbility[item.key as keyof SurfAbilityState] as string}
+                onChange={v =>
+                  setSurfAbility((a: SurfAbilityState) => ({ ...a, [item.key]: v }))
+                }
+              />
             </div>
           ))}
         </div>

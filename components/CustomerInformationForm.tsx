@@ -11,8 +11,8 @@ interface CustomerInformationFormProps {
 
 export default function CustomerInformationForm({ formData2, setFormData2, errors }: CustomerInformationFormProps) {
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6">
-      <div className="bg-gray-100 p-3 sm:p-4 mb-1">
+    <div className="max-w-6xl">
+      <div className="bg-gray-100 p-3 sm:p-4 mb-1 rounded-lg">
         <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Customer Information</h2>
       </div>
       <div className="bg-white">
