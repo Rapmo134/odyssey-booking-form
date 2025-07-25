@@ -55,11 +55,11 @@ export default function ParticipantForm({
   return (
     <>
       {/* Personal Information */}
-      <div className="bg-gray-100 p-4 mb-1">
-        <h2 className="text-sm font-semibold text-sky-600">Personal Information</h2>
+      <div className="bg-gray-100 p-3 sm:p-4 mb-1">
+        <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Personal Information</h2>
       </div>
       
-      <div className="p-4 bg-white">
+      <div className="p-3 sm:p-4 bg-white">
         <div className="text-xs text-gray-600 mb-4 space-y-1">
           <p>Please insert names and surf proficiency level.</p>
           <p>If you take Intermediate Lesson/ Surf Tour, you must to fill up the surf abilities form.</p>
@@ -68,8 +68,8 @@ export default function ParticipantForm({
 
         {/* Adult Section */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm font-semibold text-orange-500 w-16">Adult</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+            <span className="text-xs sm:text-sm font-semibold text-orange-500 w-16">Adult</span>
             <Select value={adultCount.toString()} onValueChange={val => {
               const count = parseInt(val);
               setAdultCount(count);
@@ -78,7 +78,7 @@ export default function ParticipantForm({
                 adults: Array.from({ length: count }, (_, i) => prev.adults[i] || { name: "", level: "beginner" })
               }));
             }}>
-              <SelectTrigger className="w-16 h-8 text-sm">
+              <SelectTrigger className="w-16 h-8 text-xs sm:text-sm">
                 <SelectValue placeholder="Select number" />
               </SelectTrigger>
               <SelectContent>
@@ -90,7 +90,7 @@ export default function ParticipantForm({
             </Select>
           </div>
 
-          <div className="space-y-4 ml-20">
+          <div className="space-y-4 sm:ml-20">
             {formData.adults.slice(0, adultCount).map((adult, idx) => {
               // Generate recommendations for this specific adult
               let typeCriteria: 'L' | 'ST' | Array<'L' | 'ST'> = 'L';
@@ -116,15 +116,15 @@ export default function ParticipantForm({
               }));
               
               return (
-                <div key={idx} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <div className="flex flex-col gap-6">
+                <div key={idx} className="border border-gray-200 rounded-lg p-3 sm:p-4 bg-gray-50">
+                  <div className="flex flex-col gap-4 sm:gap-6">
                     {/* Form Section */}
                     <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm w-12 font-medium">Name</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <span className="text-xs sm:text-sm w-12 font-medium">Name</span>
                           <Input
-                            className="w-52 h-8 text-sm"
+                            className="w-full sm:w-52 h-8 text-xs sm:text-sm"
                             value={adult.name}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               const newAdults = [...formData.adults];
@@ -142,7 +142,7 @@ export default function ParticipantForm({
                             setFormData((prev: any) => ({ ...prev, adults: newAdults }));
                           }}
                         >
-                          <SelectTrigger className="w-28 h-8 text-sm">
+                          <SelectTrigger className="w-full sm:w-28 h-8 text-xs sm:text-sm">
                             <SelectValue placeholder="Select level" />
                           </SelectTrigger>
                           <SelectContent>
@@ -155,16 +155,16 @@ export default function ParticipantForm({
                         </Select>
                       </div>
                       {errors[`adult_name_${idx}`] && (
-                        <span className="text-red-500 text-xs ml-12">{errors[`adult_name_${idx}`]}</span>
+                        <span className="text-red-500 text-xs ml-0 sm:ml-12">{errors[`adult_name_${idx}`]}</span>
                       )}
                       {errors[`adult_level_${idx}`] && (
-                        <span className="text-red-500 text-xs ml-12">{errors[`adult_level_${idx}`]}</span>
+                        <span className="text-red-500 text-xs ml-0 sm:ml-12">{errors[`adult_level_${idx}`]}</span>
                       )}
                     </div>
 
                     {/* Recommendations Section */}
                     <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                      <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                         Recommended Packages for {adult.name || `Adult ${idx + 1}`}
                       </h4>
                       <div className="space-y-2">
@@ -186,7 +186,7 @@ export default function ParticipantForm({
                             );
                           })
                         ) : (
-                          <div className="text-gray-500 text-sm italic p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="text-gray-500 text-xs sm:text-sm italic p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
                             No packages to recommend for this participant.
                           </div>
                         )}
@@ -198,8 +198,8 @@ export default function ParticipantForm({
             })}
             {/* === Peer/Group Recommendations Section === */}
             <div className="max-w-6xl">
-              <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-sky-700 mb-4">Recommended Peer/Group Packages</h3>
+              <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-sky-700 mb-4">Recommended Peer/Group Packages</h3>
                 <div className="space-y-4">
                   {/* Placeholder for peer/group recommendations */}
                 </div>
@@ -209,10 +209,10 @@ export default function ParticipantForm({
         </div>
 
         {/* Children Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
             <div className="w-16">
-              <span className="text-sm font-semibold text-orange-500">Children</span>
+              <span className="text-xs sm:text-sm font-semibold text-orange-500">Children</span>
               <div className="text-xs text-gray-500">7 until 15 years</div>
             </div>
             <Select value={childrenCount.toString()} onValueChange={val => {
@@ -223,7 +223,7 @@ export default function ParticipantForm({
                 children: Array.from({ length: count }, (_, i) => prev.children[i] || { name: "", age: "7-years", level: "beginner" })
               }));
             }}>
-              <SelectTrigger className="w-16 h-8 text-sm">
+              <SelectTrigger className="w-16 h-8 text-xs sm:text-sm">
                 <SelectValue placeholder="Select number" />
               </SelectTrigger>
               <SelectContent>
@@ -235,7 +235,7 @@ export default function ParticipantForm({
             </Select>
           </div>
 
-          <div className="space-y-4 ml-20">
+          <div className="space-y-4 sm:ml-20">
             {formData.children.slice(0, childrenCount).map((child, idx) => {
               // Generate recommendations for this specific child
               let typeCriteriaChild: 'L' | 'ST' | Array<'L' | 'ST'> = 'L';
@@ -261,15 +261,15 @@ export default function ParticipantForm({
               }));
               
               return (
-                <div key={idx} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <div className="flex flex-col gap-6">
+                <div key={idx} className="border border-gray-200 rounded-lg p-3 sm:p-4 bg-gray-50">
+                  <div className="flex flex-col gap-4 sm:gap-6">
                     {/* Form Section */}
                     <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm w-12 font-medium">Name</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <span className="text-xs sm:text-sm w-12 font-medium">Name</span>
                           <Input
-                            className="w-52 h-8 text-sm"
+                            className="w-full sm:w-52 h-8 text-xs sm:text-sm"
                             value={child.name}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               const newChildren = [...formData.children];
@@ -279,57 +279,59 @@ export default function ParticipantForm({
                             placeholder="Your name..."
                           />
                         </div>
-                        <Select
-                          value={child.age}
-                          onValueChange={val => {
-                            const newChildren = [...formData.children];
-                            newChildren[idx].age = val;
-                            setFormData((prev: any) => ({ ...prev, children: newChildren }));
-                          }}
-                        >
-                          <SelectTrigger className="w-24 h-8 text-sm">
-                            <SelectValue placeholder="Select age" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.from({ length: 9 }, (_, i) => (
-                              <SelectItem key={i + 7} value={`${i + 7}-years`}>{i + 7} Years</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select
-                          value={child.level}
-                          onValueChange={val => {
-                            const newChildren = [...formData.children];
-                            newChildren[idx].level = val;
-                            setFormData((prev: any) => ({ ...prev, children: newChildren }));
-                          }}
-                        >
-                          <SelectTrigger className="w-28 h-8 text-sm">
-                            <SelectValue placeholder="Select level" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {levelOptions.map(opt => (
-                              <SelectItem key={opt} value={opt}>
-                                {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                          <Select
+                            value={child.age}
+                            onValueChange={val => {
+                              const newChildren = [...formData.children];
+                              newChildren[idx].age = val;
+                              setFormData((prev: any) => ({ ...prev, children: newChildren }));
+                            }}
+                          >
+                            <SelectTrigger className="w-full sm:w-24 h-8 text-xs sm:text-sm">
+                              <SelectValue placeholder="Select age" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 9 }, (_, i) => (
+                                <SelectItem key={i + 7} value={`${i + 7}-years`}>{i + 7} Years</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Select
+                            value={child.level}
+                            onValueChange={val => {
+                              const newChildren = [...formData.children];
+                              newChildren[idx].level = val;
+                              setFormData((prev: any) => ({ ...prev, children: newChildren }));
+                            }}
+                          >
+                            <SelectTrigger className="w-full sm:w-28 h-8 text-xs sm:text-sm">
+                              <SelectValue placeholder="Select level" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {levelOptions.map(opt => (
+                                <SelectItem key={opt} value={opt}>
+                                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                       {errors[`child_name_${idx}`] && (
-                        <span className="text-red-500 text-xs ml-12">{errors[`child_name_${idx}`]}</span>
+                        <span className="text-red-500 text-xs ml-0 sm:ml-12">{errors[`child_name_${idx}`]}</span>
                       )}
                       {errors[`child_age_${idx}`] && (
-                        <span className="text-red-500 text-xs ml-12">{errors[`child_age_${idx}`]}</span>
+                        <span className="text-red-500 text-xs ml-0 sm:ml-12">{errors[`child_age_${idx}`]}</span>
                       )}
                       {errors[`child_level_${idx}`] && (
-                        <span className="text-red-500 text-xs ml-12">{errors[`child_level_${idx}`]}</span>
+                        <span className="text-red-500 text-xs ml-0 sm:ml-12">{errors[`child_level_${idx}`]}</span>
                       )}
                     </div>
 
                     {/* Recommendations Section */}
                     <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                      <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                         Recommended Packages for {child.name || `Child ${idx + 1}`}
                       </h4>
                       <div className="space-y-2">
@@ -351,7 +353,7 @@ export default function ParticipantForm({
                             );
                           })
                         ) : (
-                          <div className="text-gray-500 text-sm italic p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="text-gray-500 text-xs sm:text-sm italic p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
                             No packages to recommend for this participant.
                           </div>
                         )}

@@ -27,12 +27,13 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
   return (
     <>
       <div
-        className={`mb-4 border rounded-lg shadow-sm flex bg-white overflow-hidden ${
+        className={`mb-4 border rounded-lg shadow-sm flex flex-col sm:flex-row bg-white overflow-hidden ${
           checked ? "ring-2 ring-orange-500" : ""
         }`}
         style={{ borderColor: "#e5e7eb" }}
       >
-        <div className="w-40 relative flex-shrink-0">
+        {/* Image Section */}
+        <div className="w-full sm:w-40 h-48 sm:h-auto relative flex-shrink-0">
           <Image
             src={
               rec.pkg?.image && typeof rec.pkg.image === "string" && rec.pkg.image.length > 0
@@ -46,21 +47,32 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
             }
             fill
             priority
-            className="object-cover rounded-l-lg"
+            className="object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-t-none"
           />
         </div>
+
+        {/* Content Section */}
         <div className="flex-1 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-            <span className="font-bold text-gray-800 text-base">{rec.pkg.title}</span>
-            {rec.pkg.categoryBadges?.map((badge: string, i: number) => (
-              <span key={i} className={`px-2 py-1 text-xs font-bold text-white rounded ${rec.pkg.badgeColor}`}>
-                {badge}
-              </span>
-            ))}
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-yellow-400" />
+              <span className="font-bold text-gray-800 text-sm sm:text-base">{rec.pkg.title}</span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {rec.pkg.categoryBadges?.map((badge: string, i: number) => (
+                <span key={i} className={`px-2 py-1 text-xs font-bold text-white rounded ${rec.pkg.badgeColor}`}>
+                  {badge}
+                </span>
+              ))}
+            </div>
           </div>
-          <div className="text-sm text-gray-700 mb-2">{rec.pkg.description}</div>
-          <div className="grid grid-cols-4 gap-4 text-xs mb-2">
+
+          {/* Description */}
+          <div className="text-xs sm:text-sm text-gray-700 mb-3">{rec.pkg.description}</div>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-xs mb-3">
             <div>
               <span className="text-gray-500">Duration:</span>{" "}
               <span className="font-medium">{rec.pkg.duration}</span>
@@ -78,16 +90,20 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
               <span className="font-medium">{rec.pkg.reviews}</span>
             </div>
           </div>
-          <div className="flex flex-wrap gap-1 mb-2">
+
+          {/* Includes */}
+          <div className="flex flex-wrap gap-1 mb-3">
             {rec.pkg.includes?.map((item: string, i: number) => (
               <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
                 {item}
               </span>
             ))}
           </div>
-          <div className="flex items-center justify-between mt-2">
-            <div className="text-lg font-bold text-gray-800">{getDisplayPrice(rec.pkg.price)}</div>
-            <div className="flex gap-3">
+
+          {/* Price and Actions */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="text-base sm:text-lg font-bold text-gray-800">{getDisplayPrice(rec.pkg.price)}</div>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Tooltip content={isDisabled ? (tooltipMsg || "") : ""}>
                 <span>
                   <label className="inline-flex items-center cursor-pointer select-none">
@@ -100,7 +116,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
                       aria-label={`Select ${rec.pkg.title}`}
                     />
                     <span
-                      className={`px-6 py-2 font-semibold rounded transition-colors text-white text-sm
+                      className={`px-4 sm:px-6 py-2 font-semibold rounded transition-colors text-white text-xs sm:text-sm text-center
                         ${checked ? "bg-orange-600" : isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"}
                         shadow focus:outline-none focus:ring-2 focus:ring-orange-400
                       `}
@@ -121,11 +137,10 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
               {/* Detail Button */}
               <button
                 onClick={() => setShowModal(true)}
-                className="px-3 py-1.5 text-sm font-medium text-blue-500 border border-blue-400 rounded-sm hover:bg-blue-500 hover:text-white transition duration-150 ease-in-out"
+                className="px-3 py-2 text-xs sm:text-sm font-medium text-blue-500 border border-blue-400 rounded-sm hover:bg-blue-500 hover:text-white transition duration-150 ease-in-out"
               >
                 Lihat Detail
               </button>
-
             </div>
           </div>
         </div>
@@ -133,32 +148,34 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full shadow-lg relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg max-w-md w-full shadow-lg relative max-h-[90vh] overflow-y-auto">
             <button
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl"
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl sm:text-2xl"
               onClick={() => setShowModal(false)}
             >
               ×
             </button>
-            <h2 className="text-xl font-bold mb-2">{rec.pkg.title}</h2>
-            <p className="text-sm text-gray-700 mb-3">{rec.pkg.description}</p>
-            <ul className="list-disc list-inside text-sm text-gray-600 mb-3">
+            <h2 className="text-lg sm:text-xl font-bold mb-2 pr-8">{rec.pkg.title}</h2>
+            <p className="text-xs sm:text-sm text-gray-700 mb-3">{rec.pkg.description}</p>
+            <ul className="list-disc list-inside text-xs sm:text-sm text-gray-600 mb-3">
               {rec.pkg.includes?.map((item: string, i: number) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
-            <div className="text-sm mb-1">
-              <strong>Duration:</strong> {rec.pkg.duration}
-            </div>
-            <div className="text-sm mb-1">
-              <strong>Level:</strong> {rec.pkg.level}
-            </div>
-            <div className="text-sm mb-1">
-              <strong>Max Students:</strong> {rec.pkg.maxStudents}
-            </div>
-            <div className="text-sm">
-              <strong>Reviews:</strong> {rec.pkg.reviews}
+            <div className="space-y-1 text-xs sm:text-sm">
+              <div>
+                <strong>Duration:</strong> {rec.pkg.duration}
+              </div>
+              <div>
+                <strong>Level:</strong> {rec.pkg.level}
+              </div>
+              <div>
+                <strong>Max Students:</strong> {rec.pkg.maxStudents}
+              </div>
+              <div>
+                <strong>Reviews:</strong> {rec.pkg.reviews}
+              </div>
             </div>
           </div>
         </div>

@@ -47,11 +47,11 @@ export default function LessonsToursSpecifications({
   return (
     <>
       {/* Lessons & Tours Specifications */}
-      <div className="bg-gray-100 p-4 mb-1">
-        <h2 className="text-sm font-semibold text-sky-600">Lessons & Tours Specifications</h2>
+      <div className="bg-gray-100 p-3 sm:p-4 mb-1">
+        <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Lessons & Tours Specifications</h2>
       </div>
 
-      <div className="p-4 bg-white">
+      <div className="p-3 sm:p-4 bg-white">
         {/* Currency Selector */}
         <div className="mb-4">
           <CurrencySelector currency={currency} setCurrency={setCurrency} currencyOptions={currencyOptions} />
@@ -59,9 +59,9 @@ export default function LessonsToursSpecifications({
 
         {/* Surfing Activities */}
         <div className="mb-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm font-semibold text-orange-500 w-32">Surfing Activities</span>
-            <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2 mb-3">
+            <span className="text-xs sm:text-sm font-semibold text-orange-500 w-32">Surfing Activities</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
               {activitiesList.map((activity) => (
                 <label key={activity.key} className="flex items-center gap-2 cursor-pointer">
                   <Checkbox
@@ -74,20 +74,20 @@ export default function LessonsToursSpecifications({
                     }
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">{activity.label}</span>
+                  <span className="text-xs sm:text-sm">{activity.label}</span>
                 </label>
               ))}
             </div>
           </div>
-          {errors.activities && <span className="text-red-500 text-xs ml-32">{errors.activities}</span>}
+          {errors.activities && <span className="text-red-500 text-xs ml-0 sm:ml-32">{errors.activities}</span>}
         </div>
 
         {/* Duration */}
         <div className="mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-orange-500 w-32">Duration</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
+            <span className="text-xs sm:text-sm font-semibold text-orange-500 w-32">Duration</span>
             <Select value={duration} onValueChange={setDuration}>
-              <SelectTrigger className="w-24 h-8 text-sm">
+              <SelectTrigger className="w-full sm:w-24 h-8 text-xs sm:text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -102,64 +102,68 @@ export default function LessonsToursSpecifications({
         {/* Reservation Day */}
         <div className="mb-6">
           {reservationDays.map((res, idx) => (
-            <div key={idx} className="flex items-center gap-2 mb-2">
-              <span className="text-sm font-semibold text-orange-500 w-32">
+            <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2 mb-3 sm:mb-2">
+              <span className="text-xs sm:text-sm font-semibold text-orange-500 w-32">
                 Reservation Day {idx + 1}
               </span>
-              <Select
-                value={res.date}
-                onValueChange={(value) => {
-                  const newArr = [...reservationDays];
-                  newArr[idx].date = value;
-                  setReservationDays(newArr);
-                }}
-              >
-                <SelectTrigger className="w-36 h-8 text-sm">
-                  <SelectValue placeholder="Select Date" />
-                </SelectTrigger>
-                <SelectContent>
-                  {schedules.map(schedule => (
-                    <SelectItem key={schedule.date} value={schedule.date}>
-                      {schedule.date}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select
-                value={res.time}
-                onValueChange={(value) => {
-                  const newArr = [...reservationDays];
-                  newArr[idx].time = value;
-                  setReservationDays(newArr);
-                }}
-                disabled={!res.date}
-              >
-                <SelectTrigger className="w-32 h-8 text-sm" disabled={!res.date}>
-                  <SelectValue placeholder="Select Time" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(() => {
-                    const selectedSchedule = schedules.find(s => s.date === res.date);
-                    if (selectedSchedule) {
-                      return [
-                        { value: selectedSchedule.time1, label: selectedSchedule.time1 },
-                        { value: selectedSchedule.time2, label: selectedSchedule.time2 }
-                      ].map((timeSlot) => (
-                        <SelectItem key={timeSlot.value} value={timeSlot.value}>
-                          {timeSlot.label}
-                        </SelectItem>
-                      ));
-                    }
-                    return null;
-                  })()}
-                </SelectContent>
-              </Select>
-              {errors[`reservation_date_${idx}`] && (
-                <span className="text-red-500 text-xs ml-32">{errors[`reservation_date_${idx}`]}</span>
-              )}
-              {errors[`reservation_time_${idx}`] && (
-                <span className="text-red-500 text-xs ml-32">{errors[`reservation_time_${idx}`]}</span>
-              )}
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
+                <Select
+                  value={res.date}
+                  onValueChange={(value) => {
+                    const newArr = [...reservationDays];
+                    newArr[idx].date = value;
+                    setReservationDays(newArr);
+                  }}
+                >
+                  <SelectTrigger className="w-full sm:w-36 h-8 text-xs sm:text-sm">
+                    <SelectValue placeholder="Select Date" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {schedules.map(schedule => (
+                      <SelectItem key={schedule.date} value={schedule.date}>
+                        {schedule.date}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={res.time}
+                  onValueChange={(value) => {
+                    const newArr = [...reservationDays];
+                    newArr[idx].time = value;
+                    setReservationDays(newArr);
+                  }}
+                  disabled={!res.date}
+                >
+                  <SelectTrigger className="w-full sm:w-32 h-8 text-xs sm:text-sm" disabled={!res.date}>
+                    <SelectValue placeholder="Select Time" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(() => {
+                      const selectedSchedule = schedules.find(s => s.date === res.date);
+                      if (selectedSchedule) {
+                        return [
+                          { value: selectedSchedule.time1, label: selectedSchedule.time1 },
+                          { value: selectedSchedule.time2, label: selectedSchedule.time2 }
+                        ].map((timeSlot) => (
+                          <SelectItem key={timeSlot.value} value={timeSlot.value}>
+                            {timeSlot.label}
+                          </SelectItem>
+                        ));
+                      }
+                      return null;
+                    })()}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1">
+                {errors[`reservation_date_${idx}`] && (
+                  <span className="text-red-500 text-xs ml-0 sm:ml-32">{errors[`reservation_date_${idx}`]}</span>
+                )}
+                {errors[`reservation_time_${idx}`] && (
+                  <span className="text-red-500 text-xs ml-0 sm:ml-32">{errors[`reservation_time_${idx}`]}</span>
+                )}
+              </div>
             </div>
           ))}
         </div>

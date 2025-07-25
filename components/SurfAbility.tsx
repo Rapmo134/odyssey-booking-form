@@ -45,8 +45,10 @@ export default function SurfAbility({ surfAbility, setSurfAbility, surfExperienc
   function AbilitySelect({ value, onChange }: { value: string, onChange: (v: string) => void }) {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-24 min-w-[6rem]"><SelectValue /></SelectTrigger>
-        <SelectContent className="w-24 min-w-[6rem]">
+        <SelectTrigger className="w-20 sm:w-24 min-w-[5rem] sm:min-w-[6rem] text-xs sm:text-sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="w-20 sm:w-24 min-w-[5rem] sm:min-w-[6rem]">
           <SelectItem value="Good">Good</SelectItem>
           <SelectItem value="Average">Average</SelectItem>
           <SelectItem value="Poor">Poor</SelectItem>
@@ -55,140 +57,163 @@ export default function SurfAbility({ surfAbility, setSurfAbility, surfExperienc
     );
   }
 
+  // Mapping untuk Surf Ability items
+  const surfAbilityItems = [
+    // Column 1
+    [
+      { key: 'stamina', label: 'Stamina' },
+      { key: 'paddling', label: 'Paddling' },
+      { key: 'position', label: 'Position on the board' },
+      { key: 'standUp', label: 'How to stand up on the board' },
+      { key: 'balancing', label: 'Balancing' }
+    ],
+    // Column 2
+    [
+      { key: 'safeAwareness', label: 'Safe surf awareness' },
+      { key: 'controlBoard', label: 'Control the board' },
+      { key: 'paddleOut', label: 'Paddle out' },
+      { key: 'eskimo', label: 'Eskimo / duck dive technique' },
+      { key: 'catchWave', label: 'How to catch the wave' }
+    ],
+    // Column 3
+    [
+      { key: 'takeOff', label: 'Take off position' },
+      { key: 'pickUpSpeed', label: 'How to pick up speed' },
+      { key: 'blueWave', label: 'Riding the blue wave' },
+      { key: 'selectWave', label: 'Selecting & catching the wave' },
+      { key: 'etiquette', label: 'Surf etiquette' }
+    ]
+  ];
+
+  // Mapping untuk Experience fields
+  const experienceFields = [
+    { key: 'year', placeholder: 'Year', colSpan: 'sm:col-span-1' },
+    { key: 'months', placeholder: 'Months', colSpan: 'sm:col-span-1' },
+    { key: 'weeks', placeholder: 'Weeks', colSpan: 'sm:col-span-1' },
+    { key: 'locations', placeholder: 'Locations', colSpan: 'sm:col-span-2' },
+    { key: 'boardSize', placeholder: "Board's size", colSpan: 'sm:col-span-1' }
+  ];
+
+  // Mapping untuk Stance options
+  const stanceOptions = [
+    { value: 'Regular', label: 'Regular' },
+    { value: 'Goofy', label: 'Goofy' },
+    { value: 'Others', label: 'Others' }
+  ];
+
   return (
-    <div className="mt-10 bg-gray-50 border border-gray-200 rounded-lg p-6">
+    <div className="mt-10 bg-gray-50 border border-gray-200 rounded-lg p-4 sm:p-6">
       {/* SURF ABILITY */}
-      <div className="mb-8">
-        <div className="flex items-center mb-4">
-          <span className="font-bold text-lg">SURF ABILITY</span>
-          <span className="ml-2 text-sm">(Choose one : GOOD / AVERAGE / POOR)</span>
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-2">
+          <span className="font-bold text-base sm:text-lg">SURF ABILITY</span>
+          <span className="text-xs sm:text-sm text-gray-600">(Choose one : GOOD / AVERAGE / POOR)</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Stamina</span>
-              <AbilitySelect value={surfAbility.stamina} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, stamina: v}))} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {surfAbilityItems.map((column, columnIndex) => (
+            <div key={columnIndex} className={`space-y-3 ${columnIndex === 2 ? 'sm:col-span-2 lg:col-span-1' : ''}`}>
+              {column.map((item) => (
+                <div key={item.key} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <span className="text-xs sm:text-sm">{item.label}</span>
+                  <AbilitySelect 
+                    value={surfAbility[item.key as keyof SurfAbilityState] as string} 
+                    onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, [item.key]: v}))} 
+                  />
+                </div>
+              ))}
             </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Paddling</span>
-              <AbilitySelect value={surfAbility.paddling} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, paddling: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Position on the board</span>
-              <AbilitySelect value={surfAbility.position} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, position: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>How to stand up on the board</span>
-              <AbilitySelect value={surfAbility.standUp} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, standUp: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Balancing</span>
-              <AbilitySelect value={surfAbility.balancing} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, balancing: v}))} />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Safe surf awareness</span>
-              <AbilitySelect value={surfAbility.safeAwareness} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, safeAwareness: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Control the board</span>
-              <AbilitySelect value={surfAbility.controlBoard} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, controlBoard: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Paddle out</span>
-              <AbilitySelect value={surfAbility.paddleOut} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, paddleOut: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Eskimo / duck dive technique</span>
-              <AbilitySelect value={surfAbility.eskimo} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, eskimo: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>How to catch the wave</span>
-              <AbilitySelect value={surfAbility.catchWave} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, catchWave: v}))} />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Take off position</span>
-              <AbilitySelect value={surfAbility.takeOff} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, takeOff: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>How to pick up speed</span>
-              <AbilitySelect value={surfAbility.pickUpSpeed} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, pickUpSpeed: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Riding the blue wave</span>
-              <AbilitySelect value={surfAbility.blueWave} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, blueWave: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Selecting & catching the wave</span>
-              <AbilitySelect value={surfAbility.selectWave} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, selectWave: v}))} />
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span>Surf etiquette</span>
-              <AbilitySelect value={surfAbility.etiquette} onChange={v => setSurfAbility((a: SurfAbilityState) => ({...a, etiquette: v}))} />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* SURFING EXPERIENCES */}
       <div>
-        <div className="font-bold text-lg mb-2">SURFING EXPERIENCES <span className="font-normal text-base">(Frequently)</span></div>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-4">
-          <div className="col-span-1">
-            <Input placeholder="Year" value={surfExperience.year} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, year: e.target.value}))} />
-            {errors.year && <div className="text-red-500 text-xs mt-1">{errors.year}</div>}
-          </div>
-          <div className="col-span-1">
-            <Input placeholder="Months" value={surfExperience.months} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, months: e.target.value}))} />
-            {errors.months && <div className="text-red-500 text-xs mt-1">{errors.months}</div>}
-          </div>
-          <div className="col-span-1">
-            <Input placeholder="Weeks" value={surfExperience.weeks} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, weeks: e.target.value}))} />
-            {errors.weeks && <div className="text-red-500 text-xs mt-1">{errors.weeks}</div>}
-          </div>
-          <div className="col-span-2">
-            <Input placeholder="Locations" value={surfExperience.locations} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, locations: e.target.value}))} />
-            {errors.locations && <div className="text-red-500 text-xs mt-1">{errors.locations}</div>}
-          </div>
-          <div className="col-span-1">
-            <Input placeholder="Board's size" value={surfExperience.boardSize} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, boardSize: e.target.value}))} />
-            {errors.boardSize && <div className="text-red-500 text-xs mt-1">{errors.boardSize}</div>}
+        <div className="font-bold text-base sm:text-lg mb-4">
+          SURFING EXPERIENCES 
+          <span className="font-normal text-sm sm:text-base ml-2">(Frequently)</span>
+        </div>
+        
+        {/* Experience Grid - Responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 mb-4">
+          {experienceFields.map((field) => (
+            <div key={field.key} className={field.colSpan}>
+              <Input 
+                placeholder={field.placeholder} 
+                value={surfExperience[field.key as keyof SurfExperienceState] as string} 
+                onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, [field.key]: e.target.value}))} 
+                className="text-sm"
+              />
+              {errors[field.key] && <div className="text-red-500 text-xs mt-1">{errors[field.key]}</div>}
+            </div>
+          ))}
+        </div>
+
+        {/* Stance Selection - Responsive */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+          <span className="text-sm sm:text-base font-medium">Style / Stance (Frequently)</span>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {stanceOptions.map((option) => (
+              <label key={option.value} className="flex items-center gap-2 text-sm">
+                <input 
+                  type="radio" 
+                  name="stance" 
+                  checked={surfExperience.stance === option.value} 
+                  onChange={() => setSurfExperience((f: SurfExperienceState) => ({...f, stance: option.value}))} 
+                /> 
+                {option.label}
+                {option.value === 'Others' && (
+                  <Input 
+                    className="ml-2 w-24 sm:w-32 text-sm" 
+                    placeholder="Others" 
+                    value={surfExperience.stanceOther} 
+                    onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, stanceOther: e.target.value}))} 
+                    disabled={surfExperience.stance !== 'Others'} 
+                  />
+                )}
+              </label>
+            ))}
           </div>
         </div>
-        <div className="flex items-center gap-4 mb-4">
-          <span>Style / Stance (Frequently)</span>
-          <label className="flex items-center gap-1">
-            <input type="radio" name="stance" checked={surfExperience.stance === 'Regular'} onChange={() => setSurfExperience((f: SurfExperienceState) => ({...f, stance: 'Regular'}))} /> Regular
-          </label>
-          <label className="flex items-center gap-1">
-            <input type="radio" name="stance" checked={surfExperience.stance === 'Goofy'} onChange={() => setSurfExperience((f: SurfExperienceState) => ({...f, stance: 'Goofy'}))} /> Goofy
-          </label>
-          <label className="flex items-center gap-1">
-            <input type="radio" name="stance" checked={surfExperience.stance === 'Others'} onChange={() => setSurfExperience((f: SurfExperienceState) => ({...f, stance: 'Others'}))} /> Others
-            <Input className="ml-2 w-32" placeholder="Others" value={surfExperience.stanceOther} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, stanceOther: e.target.value}))} disabled={surfExperience.stance !== 'Others'} />
-          </label>
-        </div>
+
+        {/* Wave Size */}
         <div className="mb-4">
-          <label className="block text-sm">Size of the waves (Please describe)</label>
-          <Input value={surfExperience.waveSize} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, waveSize: e.target.value}))} />
+          <label className="block text-sm mb-2">Size of the waves (Please describe)</label>
+          <Input 
+            value={surfExperience.waveSize} 
+            onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, waveSize: e.target.value}))} 
+            className="text-sm"
+          />
           {errors.waveSize && <div className="text-red-500 text-xs mt-1">{errors.waveSize}</div>}
         </div>
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-2">
-          <div>
-            <label className="block text-sm">Other sports that you have done before (Please list)</label>
-            <Input value={surfExperience.otherSports[0]} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, otherSports: [e.target.value, f.otherSports[1]]}))} />
-          </div>
-          <div>
-            <label className="block text-sm">&nbsp;</label>
-            <Input value={surfExperience.otherSports[1]} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, otherSports: [f.otherSports[0], e.target.value]}))} />
-          </div>
+
+        {/* Other Sports */}
+        <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[0, 1].map((index) => (
+            <div key={index}>
+              <label className="block text-sm mb-2">
+                {index === 0 ? "Other sports that you have done before (Please list)" : "\u00A0"}
+              </label>
+              <Input 
+                value={surfExperience.otherSports[index]} 
+                onChange={e => setSurfExperience((f: SurfExperienceState) => {
+                  const newOtherSports = [...f.otherSports];
+                  newOtherSports[index] = e.target.value;
+                  return {...f, otherSports: newOtherSports};
+                })} 
+                className="text-sm"
+              />
+            </div>
+          ))}
         </div>
+
+        {/* Last Surf */}
         <div className="mb-2">
-          <label className="block text-sm">Describe the last time you surfed</label>
-          <Input value={surfExperience.lastSurf} onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, lastSurf: e.target.value}))} />
+          <label className="block text-sm mb-2">Describe the last time you surfed</label>
+          <Input 
+            value={surfExperience.lastSurf} 
+            onChange={e => setSurfExperience((f: SurfExperienceState) => ({...f, lastSurf: e.target.value}))} 
+            className="text-sm"
+          />
           {errors.lastSurf && <div className="text-red-500 text-xs mt-1">{errors.lastSurf}</div>}
         </div>
       </div>
