@@ -77,11 +77,11 @@ export default function ParticipantForm({
       </div>
 
       <div className="space-y-8">
-        <div className="text-sm text-gray-600 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        {/* <div className="text-sm text-gray-600 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="mb-2">Please insert names and surf proficiency level.</p>
           <p className="mb-2">If you take Intermediate Lesson/ Surf Tour, you must to fill up the surf abilities form.</p>
           <p>The form is available on the next personal information page.</p>
-        </div>
+        </div> */}
 
         {/* Adult Section */}
         <div>
