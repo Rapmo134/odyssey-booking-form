@@ -16,8 +16,8 @@ export const API_CONFIG = {
 
 // Midtrans Configuration
 export const MIDTRANS_CONFIG = {
-  CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'SB-Mid-client-k618wg72LIN17Vi6',
-  SERVER_KEY: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || 'SB-Mid-server-FmKlb8bduL2cVpQx1RP6YVV3',
+  CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '',
+  SERVER_KEY: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || '',
   IS_PRODUCTION: process.env.NEXT_PUBLIC_MIDTRANS_PRODUCTION === 'true',
   BASE_URL: process.env.NEXT_PUBLIC_MIDTRANS_PRODUCTION === 'true' 
     ? 'https://app.midtrans.com' 

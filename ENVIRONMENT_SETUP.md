@@ -1,48 +1,57 @@
 # Environment Variables Setup
 
-Untuk menggunakan endpoint dari environment variables, buat file `.env.local` di root project dengan konfigurasi berikut:
+This project requires several environment variables to be configured. Create a `.env.local` file in the root directory with the following variables:
 
-## Environment Variables
+## Required Environment Variables
 
+### API Configuration
 ```env
-# API Configuration
+# API Base URL
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8082
+
+# API Authentication Token
 NEXT_PUBLIC_API_TOKEN=your_api_token_here
+
+# API Endpoints
 NEXT_PUBLIC_SCHEDULES_ENDPOINT=/api/v1/booking/schedules
 NEXT_PUBLIC_MASTER_DATA_ENDPOINT=/api/v1/booking/master-data
 ```
 
-## Penjelasan Variables
+### Midtrans Payment Gateway
+```env
+# Midtrans Client Key
+NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=your_midtrans_client_key_here
 
-- `NEXT_PUBLIC_API_BASE_URL`: Base URL untuk API server
-- `NEXT_PUBLIC_API_TOKEN`: Token untuk autentikasi API
-- `NEXT_PUBLIC_SCHEDULES_ENDPOINT`: Endpoint untuk mengambil data schedules
-- `NEXT_PUBLIC_MASTER_DATA_ENDPOINT`: Endpoint untuk mengambil master data
+# Midtrans Server Key
+NEXT_PUBLIC_MIDTRANS_SERVER_KEY=your_midtrans_server_key_here
 
-## Endpoint yang Digunakan
+# Midtrans Environment (true for production, false for sandbox)
+NEXT_PUBLIC_MIDTRANS_PRODUCTION=false
+```
 
-Aplikasi menggunakan endpoint-endpoint berikut:
-- `/api/v1/booking/schedules` - Mengambil data jadwal
-- `/api/v1/booking/master-data` - Mengambil master data
-- `/api/v1/booking` - Membuat booking baru
-- `/api/v1/booking/apply-voucher` - Menerapkan voucher
-- `/api/v1/booking/generate-number` - Generate nomor booking
-- `/api/v1/booking/check-drafts` - Cek draft booking
+### Optional Configuration
+```env
+# PayPal Configuration (if using PayPal)
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
+NEXT_PUBLIC_PAYPAL_SECRET=your_paypal_secret_here
 
-## Cara Penggunaan
+# Database Configuration (if needed)
+DATABASE_URL=your_database_url_here
 
-1. Copy file `.env.example` (jika ada) ke `.env.local`
-2. Atau buat file `.env.local` baru dengan konfigurasi di atas
-3. Ganti nilai `your_api_token_here` dengan token API yang sebenarnya
-4. Sesuaikan `NEXT_PUBLIC_API_BASE_URL` dengan URL server API Anda
+# Application Environment
+NEXT_PUBLIC_APP_ENV=development
+```
 
-## Fallback Values
+## Getting Started
 
-Jika environment variables tidak ditemukan, aplikasi akan menggunakan nilai default:
-- Base URL: `http://127.0.0.1:8082`
-- Schedules endpoint: `/api/v1/booking/schedules`
-- Master data endpoint: `/api/v1/booking/master-data`
-- Booking endpoint: `/api/v1/booking`
-- Apply voucher endpoint: `/api/v1/booking/apply-voucher`
-- Generate number endpoint: `/api/v1/booking/generate-number`
-- Check drafts endpoint: `/api/v1/booking/check-drafts` 
+1. Copy the example above and create a `.env.local` file
+2. Replace all `your_*_here` values with your actual credentials
+3. Never commit the `.env.local` file to version control
+4. The `.env.example` file shows the structure without real values
+
+## Security Notes
+
+- All environment variables starting with `NEXT_PUBLIC_` are exposed to the client
+- Server-side secrets should not use the `NEXT_PUBLIC_` prefix
+- Keep your API tokens and payment keys secure
+- Rotate keys regularly for security 
