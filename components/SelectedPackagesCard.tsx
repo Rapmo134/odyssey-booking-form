@@ -23,12 +23,12 @@ const SelectedPackagesCard: React.FC<SelectedPackagesCardProps> = ({
   return (
     <>
       <div
-        className={`mb-4 border rounded-lg shadow-sm flex bg-white overflow-hidden ${
-          checked ? "ring-2 ring-orange-500" : ""
+        className={`mb-4 border border-gray-200 rounded-xl shadow-sm flex flex-col sm:flex-row bg-white overflow-hidden transition-all duration-200 hover:shadow-md ${
+          checked ? "ring-2 ring-blue-500 border-blue-200" : "hover:border-gray-300"
         }`}
-        style={{ borderColor: "#e5e7eb" }}
       >
-        <div className="w-40 relative flex-shrink-0">
+        {/* Image Section */}
+        <div className="w-full sm:w-40 h-48 sm:h-auto relative flex-shrink-0">
           <Image
             src={
               rec.pkg?.image && typeof rec.pkg.image === "string" && rec.pkg.image.length > 0
@@ -42,48 +42,68 @@ const SelectedPackagesCard: React.FC<SelectedPackagesCardProps> = ({
             }
             fill
             priority
-            className="object-cover rounded-l-lg"
+            className="object-cover rounded-t-xl sm:rounded-l-xl sm:rounded-t-none"
           />
         </div>
-        <div className="flex-1 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-            <span className="font-bold text-gray-800 text-base">{rec.pkg.title}</span>
-            {rec.pkg.categoryBadges?.map((badge: string, i: number) => (
-              <span key={i} className={`px-2 py-1 text-xs font-bold text-white rounded ${rec.pkg.badgeColor}`}>
-                {badge}
-              </span>
-            ))}
-          </div>
-          <div className="text-sm text-gray-700 mb-2">{rec.pkg.description}</div>
-          <div className="grid grid-cols-4 gap-4 text-xs mb-2">
-            <div>
-              <span className="text-gray-500">Duration:</span>{" "}
-              <span className="font-medium">{rec.pkg.duration}</span>
+
+        {/* Content Section */}
+        <div className="flex-1 p-5">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-yellow-400" />
+              <span className="font-semibold text-gray-900 text-sm sm:text-base">{rec.pkg.title}</span>
             </div>
-            <div>
-              <span className="text-gray-500">Max Students:</span>{" "}
-              <span className="font-medium">{rec.pkg.maxStudents}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Level:</span>{" "}
-              <span className="font-medium">{rec.pkg.level}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Reviews:</span>{" "}
-              <span className="font-medium">{rec.pkg.reviews}</span>
+            <div className="flex flex-wrap gap-1">
+              {rec.pkg.categoryBadges?.map((badge: string, i: number) => (
+                <span key={i} className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-full">
+                  {badge}
+                </span>
+              ))}
             </div>
           </div>
-          <div className="flex flex-wrap gap-1 mb-2">
+          
+          {/* Description */}
+          <div className="text-sm text-gray-600 mb-4 leading-relaxed">{rec.pkg.description}</div>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-sm mb-4">
+            <div>
+              <span className="text-gray-500 text-xs">Duration:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.duration}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 text-xs">Max Students:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.maxStudents}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 text-xs">Level:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.level}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 text-xs">Reviews:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.reviews}</span>
+            </div>
+          </div>
+          
+          {/* Includes */}
+          <div className="flex flex-wrap gap-2 mb-4">
             {rec.pkg.includes?.map((item: string, i: number) => (
-              <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+              <span key={i} className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
                 {item}
               </span>
             ))}
           </div>
-          <div className="flex items-center justify-between mt-2">
-            <div className="text-lg font-bold text-gray-800">{getDisplayPrice(rec.pkg.price)}</div>
-            <Button variant="outline" size="sm" onClick={() => onCancel(rec.recKey || Object.keys(rec).find(key => key !== 'pkg') || '')}>
+
+          {/* Price and Actions */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="text-lg sm:text-xl font-bold text-gray-900">{getDisplayPrice(rec.pkg.price)}</div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onCancel(rec.recKey || Object.keys(rec).find(key => key !== 'pkg') || '')}
+              className="w-full sm:w-auto border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+            >
               Cancel
             </Button>
           </div>

@@ -27,10 +27,9 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
   return (
     <>
       <div
-        className={`mb-4 border rounded-lg shadow-sm flex flex-col sm:flex-row bg-white overflow-hidden ${
-          checked ? "ring-2 ring-orange-500" : ""
+        className={`mb-4 border border-gray-200 rounded-xl shadow-sm flex flex-col sm:flex-row bg-white overflow-hidden transition-all duration-200 hover:shadow-md ${
+          checked ? "ring-2 ring-blue-500 border-blue-200" : "hover:border-gray-300"
         }`}
-        style={{ borderColor: "#e5e7eb" }}
       >
         {/* Image Section */}
         <div className="w-full sm:w-40 h-48 sm:h-auto relative flex-shrink-0">
@@ -47,21 +46,21 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
             }
             fill
             priority
-            className="object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-t-none"
+            className="object-cover rounded-t-xl sm:rounded-l-xl sm:rounded-t-none"
           />
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-5">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-yellow-400" />
-              <span className="font-bold text-gray-800 text-sm sm:text-base">{rec.pkg.title}</span>
+              <span className="font-bold text-gray-900 text-sm sm:text-base">{rec.pkg.title}</span>
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-2">
               {rec.pkg.categoryBadges?.map((badge: string, i: number) => (
-                <span key={i} className={`px-2 py-1 text-xs font-bold text-white rounded ${rec.pkg.badgeColor}`}>
+                <span key={i} className={`px-3 py-1 text-xs font-medium text-white rounded-full ${rec.pkg.badgeColor}`}>
                   {badge}
                 </span>
               ))}
@@ -69,41 +68,41 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
           </div>
 
           {/* Description */}
-          <div className="text-xs sm:text-sm text-gray-700 mb-3">{rec.pkg.description}</div>
+          <div className="text-sm text-gray-600 mb-4 leading-relaxed">{rec.pkg.description}</div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-xs mb-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-sm mb-4">
             <div>
-              <span className="text-gray-500">Duration:</span>{" "}
-              <span className="font-medium">{rec.pkg.duration}</span>
+              <span className="text-gray-500 text-xs">Duration:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.duration}</span>
             </div>
             <div>
-              <span className="text-gray-500">Max Students:</span>{" "}
-              <span className="font-medium">{rec.pkg.maxStudents}</span>
+              <span className="text-gray-500 text-xs">Max Students:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.maxStudents}</span>
             </div>
             <div>
-              <span className="text-gray-500">Level:</span>{" "}
-              <span className="font-medium">{rec.pkg.level}</span>
+              <span className="text-gray-500 text-xs">Level:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.level}</span>
             </div>
             <div>
-              <span className="text-gray-500">Reviews:</span>{" "}
-              <span className="font-medium">{rec.pkg.reviews}</span>
+              <span className="text-gray-500 text-xs">Reviews:</span>
+              <span className="font-medium text-gray-900 ml-1">{rec.pkg.reviews}</span>
             </div>
           </div>
 
           {/* Includes */}
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-2 mb-4">
             {rec.pkg.includes?.map((item: string, i: number) => (
-              <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+              <span key={i} className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
                 {item}
               </span>
             ))}
           </div>
 
           {/* Price and Actions */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="text-base sm:text-lg font-bold text-gray-800">{getDisplayPrice(rec.pkg.price)}</div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-lg sm:text-xl font-bold text-gray-900">{getDisplayPrice(rec.pkg.price)}</div>
+            <div className="flex flex-col sm:flex-row gap-3">
               <Tooltip content={isDisabled ? (tooltipMsg || "") : ""}>
                 <span>
                   <label className="inline-flex items-center cursor-pointer select-none">
@@ -116,9 +115,9 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
                       aria-label={`Select ${rec.pkg.title}`}
                     />
                     <span
-                      className={`px-4 sm:px-6 py-2 font-semibold rounded transition-colors text-white text-xs sm:text-sm text-center
-                        ${checked ? "bg-orange-600" : isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"}
-                        shadow focus:outline-none focus:ring-2 focus:ring-orange-400
+                      className={`px-6 py-2.5 font-semibold rounded-lg transition-all duration-200 text-white text-sm text-center
+                        ${checked ? "bg-blue-600 shadow-md" : isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 hover:shadow-md"}
+                        focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
                       `}
                       tabIndex={0}
                       role="radio"
@@ -137,9 +136,9 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
               {/* Detail Button */}
               <button
                 onClick={() => setShowModal(true)}
-                className="px-3 py-2 text-xs sm:text-sm font-medium text-blue-500 border border-blue-400 rounded-sm hover:bg-blue-500 hover:text-white transition duration-150 ease-in-out"
+                className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
               >
-                Lihat Detail
+                See Details
               </button>
             </div>
           </div>
@@ -148,33 +147,37 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-          <div className="bg-white p-4 sm:p-6 rounded-lg max-w-md w-full shadow-lg relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-xl relative max-h-[90vh] overflow-y-auto">
             <button
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl sm:text-2xl"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl transition-colors"
               onClick={() => setShowModal(false)}
             >
               ×
             </button>
-            <h2 className="text-lg sm:text-xl font-bold mb-2 pr-8">{rec.pkg.title}</h2>
-            <p className="text-xs sm:text-sm text-gray-700 mb-3">{rec.pkg.description}</p>
-            <ul className="list-disc list-inside text-xs sm:text-sm text-gray-600 mb-3">
+            <h2 className="text-xl font-bold mb-3 pr-8 text-gray-900">{rec.pkg.title}</h2>
+            <p className="text-sm text-gray-600 mb-4 leading-relaxed">{rec.pkg.description}</p>
+            <ul className="list-disc list-inside text-sm text-gray-600 mb-4 space-y-1">
               {rec.pkg.includes?.map((item: string, i: number) => (
                 <li key={i}>{item}</li>
               ))}
             </ul>
-            <div className="space-y-1 text-xs sm:text-sm">
-              <div>
-                <strong>Duration:</strong> {rec.pkg.duration}
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Duration:</span>
+                <span className="font-medium text-gray-900">{rec.pkg.duration}</span>
               </div>
-              <div>
-                <strong>Level:</strong> {rec.pkg.level}
+              <div className="flex justify-between">
+                <span className="text-gray-500">Level:</span>
+                <span className="font-medium text-gray-900">{rec.pkg.level}</span>
               </div>
-              <div>
-                <strong>Max Students:</strong> {rec.pkg.maxStudents}
+              <div className="flex justify-between">
+                <span className="text-gray-500">Max Students:</span>
+                <span className="font-medium text-gray-900">{rec.pkg.maxStudents}</span>
               </div>
-              <div>
-                <strong>Reviews:</strong> {rec.pkg.reviews}
+              <div className="flex justify-between">
+                <span className="text-gray-500">Reviews:</span>
+                <span className="font-medium text-gray-900">{rec.pkg.reviews}</span>
               </div>
             </div>
           </div>

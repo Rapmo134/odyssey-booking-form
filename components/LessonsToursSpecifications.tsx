@@ -1,7 +1,5 @@
 "use client"
 
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import CurrencySelector from "./CurrencySelector"
 
 type ActivityKey = "surfLessons" | "surfTours";
@@ -29,6 +27,7 @@ interface LessonsToursSpecificationsProps {
   setReservationDays: (days: Array<{ date: string; time: string }>) => void;
   schedules: Array<{ date: string; time1: string; time2: string }>;
   errors: { [key: string]: string };
+  validateField?: (fieldName: string, value: any, context?: any) => void;
 }
 
 export default function LessonsToursSpecifications({
@@ -42,130 +41,168 @@ export default function LessonsToursSpecifications({
   reservationDays,
   setReservationDays,
   schedules,
-  errors
+  errors,
+  validateField
 }: LessonsToursSpecificationsProps) {
   return (
     <>
-      {/* Lessons & Tours Specifications */}
-      <div className="bg-gray-100 p-3 sm:p-4 mb-1 rounded-lg">
-        <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Lessons & Tours Specifications</h2>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-l-4 border-blue-400 rounded-lg p-4 mb-6 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-sky-500 rounded-lg flex items-center justify-center">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-slate-800">Lessons & Tours Specifications</h2>
+            <p className="text-sm text-slate-600 mt-1">Configure your surfing activities and schedule</p>
+          </div>
+        </div>
       </div>
 
-      <div className="p-3 sm:p-4 bg-white">
+      <div className="space-y-8">
         {/* Currency Selector */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <CurrencySelector currency={currency} setCurrency={setCurrency} currencyOptions={currencyOptions} />
-        </div>
+        </div> */}
 
         {/* Surfing Activities */}
-        <div className="mb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2 mb-3">
-            <span className="text-xs sm:text-sm font-semibold text-orange-500 w-32">Surfing Activities</span>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-              {activitiesList.map((activity) => (
-                <label key={activity.key} className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox
-                    checked={selectedActivities[activity.key]}
-                    onCheckedChange={(checked) =>
-                      setSelectedActivities((prev: Record<ActivityKey, boolean>) => ({
-                        ...prev,
-                        [activity.key]: checked as boolean,
-                      }))
-                    }
-                    className="w-4 h-4"
-                  />
-                  <span className="text-xs sm:text-sm">{activity.label}</span>
-                </label>
-              ))}
-            </div>
+        <div>
+          <div className="mb-4">
+            <h3 className="text-base font-medium text-gray-900 mb-2">Surfing Activities</h3>
+            <p className="text-sm text-gray-600">Select the activities you'd like to book</p>
           </div>
-          {errors.activities && <span className="text-red-500 text-xs ml-0 sm:ml-32">{errors.activities}</span>}
+          
+          <div className="space-y-3">
+            {activitiesList.map((activity) => (
+              <label key={activity.key} className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedActivities[activity.key]}
+                  onChange={(e) =>
+                    setSelectedActivities((prev: Record<ActivityKey, boolean>) => ({
+                      ...prev,
+                      [activity.key]: e.target.checked,
+                    }))
+                  }
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <span className="ml-3 text-sm font-medium text-gray-900">{activity.label}</span>
+              </label>
+            ))}
+          </div>
+          {errors.activities && (
+            <p className="mt-2 text-sm text-red-600">{errors.activities}</p>
+          )}
         </div>
 
         {/* Duration */}
-        <div className="mb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
-            <span className="text-xs sm:text-sm font-semibold text-orange-500 w-32">Duration</span>
-            <Select value={duration} onValueChange={setDuration}>
-              <SelectTrigger className="w-full sm:w-24 h-8 text-xs sm:text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {durationOptions.map(opt => (
-                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div>
+          <div className="mb-4">
+            <h3 className="text-base font-medium text-gray-900 mb-2">Duration</h3>
+            <p className="text-sm text-gray-600">Choose your booking duration</p>
           </div>
+          
+          <select 
+            value={duration} 
+            onChange={(e) => setDuration(e.target.value)}
+            className="w-full sm:w-64 px-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          >
+            <option value="">Select Duration</option>
+            {durationOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
         </div>
 
-        {/* Reservation Day */}
-        <div className="mb-6">
-          {reservationDays.map((res, idx) => (
-            <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2 mb-3 sm:mb-2">
-              <span className="text-xs sm:text-sm font-semibold text-orange-500 w-32">
-                Reservation Day {idx + 1}
-              </span>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
-                <Select
-                  value={res.date}
-                  onValueChange={(value) => {
-                    const newArr = [...reservationDays];
-                    newArr[idx].date = value;
-                    setReservationDays(newArr);
-                  }}
-                >
-                  <SelectTrigger className="w-full sm:w-36 h-8 text-xs sm:text-sm">
-                    <SelectValue placeholder="Select Date" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schedules.map(schedule => (
-                      <SelectItem key={schedule.date} value={schedule.date}>
-                        {schedule.date}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={res.time}
-                  onValueChange={(value) => {
-                    const newArr = [...reservationDays];
-                    newArr[idx].time = value;
-                    setReservationDays(newArr);
-                  }}
-                  disabled={!res.date}
-                >
-                  <SelectTrigger className="w-full sm:w-32 h-8 text-xs sm:text-sm" disabled={!res.date}>
-                    <SelectValue placeholder="Select Time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(() => {
-                      const selectedSchedule = schedules.find(s => s.date === res.date);
-                      if (selectedSchedule) {
-                        return [
-                          { value: selectedSchedule.time1, label: selectedSchedule.time1 },
-                          { value: selectedSchedule.time2, label: selectedSchedule.time2 }
-                        ].map((timeSlot) => (
-                          <SelectItem key={timeSlot.value} value={timeSlot.value}>
-                            {timeSlot.label}
-                          </SelectItem>
-                        ));
-                      }
-                      return null;
-                    })()}
-                  </SelectContent>
-                </Select>
+        {/* Reservation Days */}
+        <div>
+          <div className="mb-4">
+            <h3 className="text-base font-medium text-gray-900 mb-2">Reservation Schedule</h3>
+            <p className="text-sm text-gray-600">Select your preferred dates and times</p>
+          </div>
+          
+          <div className="space-y-4">
+            {reservationDays.map((res, idx) => (
+              <div key={idx} className="border-b border-gray-200 pb-4 last:border-b-0">
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Day {idx + 1}</h4>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <select
+                      value={res.date}
+                      onChange={(e) => {
+                        const newArr = [...reservationDays];
+                        newArr[idx].date = e.target.value;
+                        newArr[idx].time = "";
+                        setReservationDays(newArr);
+                        
+                        if (validateField) {
+                          validateField('reservationDate', e.target.value, { index: idx });
+                        }
+                      }}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    >
+                      <option value="">Select Date</option>
+                      {schedules.map(schedule => {
+                        const isDateSelected = reservationDays.some((day, dayIndex) => 
+                          dayIndex !== idx && day.date === schedule.date
+                        );
+                        
+                        return (
+                          <option 
+                            key={schedule.date} 
+                            value={schedule.date}
+                            disabled={isDateSelected}
+                          >
+                            {schedule.date} {isDateSelected ? "(Already selected)" : ""}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors[`reservation_date_${idx}`] && (
+                      <p className="mt-1 text-sm text-red-600">{errors[`reservation_date_${idx}`]}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                    <select
+                      value={res.time}
+                      onChange={(e) => {
+                        const newArr = [...reservationDays];
+                        newArr[idx].time = e.target.value;
+                        setReservationDays(newArr);
+                      }}
+                      disabled={!res.date}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="">Select Time</option>
+                      {(() => {
+                        const selectedSchedule = schedules.find(s => s.date === res.date);
+                        if (selectedSchedule) {
+                          return [
+                            { value: selectedSchedule.time1, label: selectedSchedule.time1 },
+                            { value: selectedSchedule.time2, label: selectedSchedule.time2 }
+                          ].map((timeSlot) => (
+                            <option key={timeSlot.value} value={timeSlot.value}>
+                              {timeSlot.label}
+                            </option>
+                          ));
+                        }
+                        return null;
+                      })()}
+                    </select>
+                    {errors[`reservation_time_${idx}`] && (
+                      <p className="mt-1 text-sm text-red-600">{errors[`reservation_time_${idx}`]}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                {errors[`reservation_date_${idx}`] && (
-                  <span className="text-red-500 text-xs ml-0 sm:ml-32">{errors[`reservation_date_${idx}`]}</span>
-                )}
-                {errors[`reservation_time_${idx}`] && (
-                  <span className="text-red-500 text-xs ml-0 sm:ml-32">{errors[`reservation_time_${idx}`]}</span>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </>

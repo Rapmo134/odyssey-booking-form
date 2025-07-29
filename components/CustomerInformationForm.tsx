@@ -7,197 +7,233 @@ interface CustomerInformationFormProps {
   formData2: any
   setFormData2: (data: any) => void
   errors: any
+  validateField: (fieldName: string, value: any) => void
 }
 
-export default function CustomerInformationForm({ formData2, setFormData2, errors }: CustomerInformationFormProps) {
+export default function CustomerInformationForm({ formData2, setFormData2, errors, validateField }: CustomerInformationFormProps) {
   return (
-    <div className="max-w-6xl">
-      <div className="bg-gray-100 p-3 sm:p-4 mb-1 rounded-lg">
-        <h2 className="text-xs sm:text-sm font-semibold text-sky-600">Customer Information</h2>
+    <>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-l-4 border-blue-400 rounded-lg p-4 mb-6 mt-12 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-sky-500 rounded-lg flex items-center justify-center">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-slate-800">Customer Information</h2>
+            <p className="text-sm text-slate-600 mt-1">Please provide your contact and accommodation details</p>
+          </div>
+        </div>
       </div>
-      <div className="bg-white">
-        <div className="my-4 sm:my-8 mx-2 sm:mx-4">
-          {/* Form Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-            {/* Left Column */}
-            <div className="space-y-4 sm:space-y-6">
-              {/* Full Booking Name */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Full Booking Name <span className="text-red-500">(*)</span>
-                </label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Select value={formData2.title} onValueChange={(value) => setFormData2({ ...formData2, title: value })}>
-                    <SelectTrigger className="w-full sm:w-20 text-xs sm:text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Mr">Mr</SelectItem>
-                      <SelectItem value="Mrs">Mrs</SelectItem>
-                      <SelectItem value="Ms">Ms</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    value={formData2.fullName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, fullName: e.target.value })}
-                    className="flex-1 text-xs sm:text-sm"
-                    placeholder="Full name"
-                  />
-                </div>
-                {errors.fullName && <div className="text-red-500 text-xs mt-1">{errors.fullName}</div>}
-              </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Email <span className="text-red-500">(*)</span>
-                </label>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        {/* Form Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Full Booking Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Full Booking Name <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-3">
+                <select
+                  value={formData2.title}
+                  onChange={(e) => {
+                    setFormData2({ ...formData2, title: e.target.value });
+                  }}
+                  className="w-20 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value="Mr">Mr</option>
+                  <option value="Mrs">Mrs</option>
+                  <option value="Ms">Ms</option>
+                </select>
                 <Input
-                  type="email"
-                  value={formData2.email}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, email: e.target.value })}
-                  placeholder="your@email.com"
-                  className="text-xs sm:text-sm"
+                  value={formData2.fullName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const value = e.target.value;
+                    setFormData2({ ...formData2, fullName: value });
+                    validateField('fullName', value);
+                  }}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="Full name"
                 />
-                {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
               </div>
-
-              {/* Mobile Phone */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">Mobile Phone</label>
-                <Input
-                  value={formData2.mobilePhone}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, mobilePhone: e.target.value })}
-                  placeholder="Phone number"
-                  className="text-xs sm:text-sm"
-                />
-                {errors.mobilePhone && <div className="text-red-500 text-xs mt-1">{errors.mobilePhone}</div>}
-              </div>
-
-              {/* Hotel */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Hotel <span className="text-red-500">(*)</span>
-                </label>
-                <Input value={formData2.hotel} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, hotel: e.target.value })} placeholder="Hotel name" className="text-xs sm:text-sm" />
-                {errors.hotel && <div className="text-red-500 text-xs mt-1">{errors.hotel}</div>}
-              </div>
-
-              {/* Hotel Address */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Hotel Address <span className="text-red-500">(*)</span>
-                </label>
-                <Input
-                  value={formData2.hotelAddress}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, hotelAddress: e.target.value })}
-                  placeholder="Hotel address"
-                  className="text-xs sm:text-sm"
-                />
-                {errors.hotelAddress && <div className="text-red-500 text-xs mt-1">{errors.hotelAddress}</div>}
-              </div>
-
-              {/* Booking Name in the Hotel */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Booking Name in the Hotel <span className="text-red-500">(*)</span>
-                </label>
-                <Input
-                  value={formData2.bookingName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, bookingName: e.target.value })}
-                  placeholder="Booking name in hotel"
-                  className="text-xs sm:text-sm"
-                />
-                {errors.bookingName && <div className="text-red-500 text-xs mt-1">{errors.bookingName}</div>}
-              </div>
-
-              {/* Date of Arrival */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">Date of Arrival</label>
-                <div className="relative">
-                  <Input
-                    value={formData2.dateOfArrival}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, dateOfArrival: e.target.value })}
-                    className="pr-10 text-xs sm:text-sm"
-                    placeholder="Select date"
-                  />
-                  <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500" />
-                </div>
-                {errors.dateOfArrival && <div className="text-red-500 text-xs mt-1">{errors.dateOfArrival}</div>}
-              </div>
+              {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
             </div>
 
-            {/* Right Column */}
-            <div className="space-y-4 sm:space-y-6">
-              {/* Country */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">Country</label>
-                <Select
-                  value={formData2.country}
-                  onValueChange={(value) => setFormData2({ ...formData2, country: value })}
-                >
-                  <SelectTrigger className="text-xs sm:text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Indonesia">Indonesia</SelectItem>
-                    <SelectItem value="Malaysia">Malaysia</SelectItem>
-                    <SelectItem value="Singapore">Singapore</SelectItem>
-                    <SelectItem value="Thailand">Thailand</SelectItem>
-                    <SelectItem value="Australia">Australia</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.country && <div className="text-red-500 text-xs mt-1">{errors.country}</div>}
-              </div>
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <Input
+                type="email"
+                value={formData2.email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  setFormData2({ ...formData2, email: value });
+                  validateField('email', value);
+                }}
+                placeholder="your@email.com"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            </div>
 
-              {/* Nationality */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">Nationality</label>
+            {/* Mobile Phone */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Phone</label>
+              <Input
+                value={formData2.mobilePhone}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  setFormData2({ ...formData2, mobilePhone: value });
+                }}
+                placeholder="Phone number"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+              {errors.mobilePhone && <p className="mt-1 text-sm text-red-600">{errors.mobilePhone}</p>}
+            </div>
+
+            {/* Hotel */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hotel <span className="text-red-500">*</span>
+              </label>
+              <Input 
+                value={formData2.hotel} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  setFormData2({ ...formData2, hotel: value });
+                  validateField('hotel', value);
+                }} 
+                placeholder="Hotel name" 
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+              />
+              {errors.hotel && <p className="mt-1 text-sm text-red-600">{errors.hotel}</p>}
+            </div>
+
+            {/* Hotel Address */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hotel Address <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={formData2.hotelAddress}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  setFormData2({ ...formData2, hotelAddress: value });
+                  validateField('hotelAddress', value);
+                }}
+                placeholder="Hotel address"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+              {errors.hotelAddress && <p className="mt-1 text-sm text-red-600">{errors.hotelAddress}</p>}
+            </div>
+
+            {/* Booking Name in the Hotel */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Booking Name in the Hotel <span className="text-red-500">*</span>
+              </label>
+              <Input
+                value={formData2.bookingName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  setFormData2({ ...formData2, bookingName: value });
+                  validateField('bookingName', value);
+                }}
+                placeholder="Booking name in hotel"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+              {errors.bookingName && <p className="mt-1 text-sm text-red-600">{errors.bookingName}</p>}
+            </div>
+
+            {/* Date of Arrival */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Date of Arrival</label>
+              <div className="relative">
                 <Input
-                  value={formData2.nationality}
-                  placeholder="Nationality"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, nationality: e.target.value })}
-                  className="text-xs sm:text-sm"
+                  value={formData2.dateOfArrival}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, dateOfArrival: e.target.value })}
+                  className="w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="Select date"
                 />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
+              {errors.dateOfArrival && <p className="mt-1 text-sm text-red-600">{errors.dateOfArrival}</p>}
+            </div>
+          </div>
 
-              {/* Hotel Transfer Service */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Hotel transfer service? <span className="text-red-500">(*)</span>
-                </label>
-                <Select
-                  value={formData2.hotelTransfer}
-                  onValueChange={(value) => setFormData2({ ...formData2, hotelTransfer: value })}
-                >
-                  <SelectTrigger className="text-xs sm:text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Yes">Yes</SelectItem>
-                    <SelectItem value="No">No</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.hotelTransfer && <div className="text-red-500 text-xs mt-1">{errors.hotelTransfer}</div>}
-              </div>
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Country */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+              <select
+                value={formData2.country}
+                onChange={(e) => setFormData2({ ...formData2, country: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              >
+                <option value="Indonesia">Indonesia</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="Singapore">Singapore</option>
+                <option value="Thailand">Thailand</option>
+                <option value="Australia">Australia</option>
+                <option value="Other">Other</option>
+              </select>
+              {errors.country && <p className="mt-1 text-sm text-red-600">{errors.country}</p>}
+            </div>
 
-              {/* Notes */}
-              <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-2">
-                  Note (Comments, Request, Question)
-                </label>
-                <Textarea
-                  value={formData2.notes}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData2({ ...formData2, notes: e.target.value })}
-                  rows={6}
-                  className="resize-none text-xs sm:text-sm"
-                />
-              </div>
+            {/* Nationality */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
+              <Input
+                value={formData2.nationality}
+                placeholder="Nationality"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData2({ ...formData2, nationality: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+            </div>
+
+            {/* Hotel Transfer Service */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hotel transfer service? <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={formData2.hotelTransfer}
+                onChange={(e) => {
+                  setFormData2({ ...formData2, hotelTransfer: e.target.value });
+                  validateField('hotelTransfer', e.target.value);
+                }}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              >
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+              {errors.hotelTransfer && <p className="mt-1 text-sm text-red-600">{errors.hotelTransfer}</p>}
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Note (Comments, Request, Question)
+              </label>
+              <Textarea
+                value={formData2.notes}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData2({ ...formData2, notes: e.target.value })}
+                rows={6}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                placeholder="Enter any additional notes, comments, or special requests..."
+              />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 } 

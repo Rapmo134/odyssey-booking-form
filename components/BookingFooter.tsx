@@ -64,15 +64,13 @@ export default function BookingFooter() {
 
             {/* Language Selector */}
             <div className="mt-3 sm:mt-4">
-              <Select defaultValue="english">
-                <SelectTrigger className="w-24 sm:w-32 bg-gray-800 border-gray-600 text-white text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="english">ENGLISH</SelectItem>
-                  <SelectItem value="indonesian">INDONESIAN</SelectItem>
-                </SelectContent>
-              </Select>
+              <select
+                defaultValue="english"
+                className="w-24 sm:w-32 bg-gray-800 border-gray-600 text-white text-xs"
+              >
+                <option value="english">ENGLISH</option>
+                <option value="indonesian">INDONESIAN</option>
+              </select>
             </div>
           </div>
         </div>

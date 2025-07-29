@@ -71,3 +71,101 @@
 .sepia {
   filter: sepia(100%) hue-rotate(30deg) saturate(1.2);
 }
+
+/* Global styles for native HTML form elements */
+@layer base {
+  /* Select elements - using !important to override any existing styles */
+  select {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white !important;
+  }
+  
+  /* Radio buttons - using !important to override any existing styles */
+  input[type="radio"] {
+    @apply w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 !important;
+  }
+  
+  /* Checkboxes - using !important to override any existing styles */
+  input[type="checkbox"] {
+    @apply w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 !important;
+  }
+  
+  /* Text inputs - using !important to override any existing styles */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"] {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 !important;
+  }
+  
+  /* Textarea - using !important to override any existing styles */
+  textarea {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none !important;
+  }
+}
+
+/* Utility classes for form elements */
+@layer utilities {
+  .form-select {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white !important;
+  }
+  
+  .form-radio {
+    @apply w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 !important;
+  }
+  
+  .form-checkbox {
+    @apply w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 !important;
+  }
+  
+  .form-input {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 !important;
+  }
+}
+
+/* Additional specific styles to ensure global styles work */
+@layer base {
+  /* Override any existing form styles with higher specificity */
+  select:not([class*="ui-"]) {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white !important;
+  }
+  
+  input[type="radio"]:not([class*="ui-"]) {
+    @apply w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 !important;
+  }
+  
+  input[type="checkbox"]:not([class*="ui-"]) {
+    @apply w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 !important;
+  }
+  
+  input[type="text"]:not([class*="ui-"]),
+  input[type="email"]:not([class*="ui-"]),
+  input[type="tel"]:not([class*="ui-"]),
+  input[type="number"]:not([class*="ui-"]),
+  input[type="date"]:not([class*="ui-"]) {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 !important;
+  }
+  
+  textarea:not([class*="ui-"]) {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none !important;
+  }
+}
+
+/* Force global styles with highest specificity */
+@layer utilities {
+  .global-select {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white !important;
+  }
+  
+  .global-radio {
+    @apply w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 !important;
+  }
+  
+  .global-checkbox {
+    @apply w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 !important;
+  }
+  
+  .global-input {
+    @apply px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 !important;
+  }
+}
