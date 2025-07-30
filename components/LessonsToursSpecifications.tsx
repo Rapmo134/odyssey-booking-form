@@ -47,21 +47,21 @@ export default function LessonsToursSpecifications({
   return (
     <>
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-l-4 border-blue-400 rounded-lg p-4 mb-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-sky-500 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-l-4 border-blue-400 rounded-lg p-3 sm:p-4 md:p-5 mb-4 sm:mb-5 md:mb-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 md:gap-4">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-sky-500 rounded-lg flex items-center justify-center flex-shrink-0 self-center sm:self-auto">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold text-slate-800">Lessons & Tours Specifications</h2>
-            <p className="text-sm text-slate-600 mt-1">Configure your surfing activities and schedule</p>
+          <div className="text-center sm:text-left flex-1">
+            <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-slate-800 leading-tight">Lessons & Tours Specifications</h2>
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 mt-1 sm:mt-2 leading-relaxed">Configure your surfing activities and schedule</p>
           </div>
         </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {/* Currency Selector */}
         {/* <div className="mb-4">
           <CurrencySelector currency={currency} setCurrency={setCurrency} currencyOptions={currencyOptions} />
@@ -69,14 +69,14 @@ export default function LessonsToursSpecifications({
 
         {/* Surfing Activities */}
         <div>
-          <div className="mb-4">
-            <h3 className="text-base font-medium text-gray-900 mb-2">Surfing Activities</h3>
-            <p className="text-sm text-gray-600">Select the activities you'd like to book</p>
+          <div className="mb-3 sm:mb-4">
+            <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1 sm:mb-2">Surfing Activities</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Select the activities you'd like to book</p>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {activitiesList.map((activity) => (
-              <label key={activity.key} className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+              <label key={activity.key} className="flex items-center p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedActivities[activity.key]}
@@ -86,28 +86,28 @@ export default function LessonsToursSpecifications({
                       [activity.key]: e.target.checked,
                     }))
                   }
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 flex-shrink-0"
                 />
-                <span className="ml-3 text-sm font-medium text-gray-900">{activity.label}</span>
+                <span className="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-gray-900">{activity.label}</span>
               </label>
             ))}
           </div>
           {errors.activities && (
-            <p className="mt-2 text-sm text-red-600">{errors.activities}</p>
+            <p className="mt-2 text-xs sm:text-sm text-red-600">{errors.activities}</p>
           )}
         </div>
 
         {/* Duration */}
         <div>
-          <div className="mb-4">
-            <h3 className="text-base font-medium text-gray-900 mb-2">Duration</h3>
-            <p className="text-sm text-gray-600">Choose your booking duration</p>
+          <div className="mb-3 sm:mb-4">
+            <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1 sm:mb-2">Duration</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Choose your booking duration</p>
           </div>
           
           <select 
             value={duration} 
             onChange={(e) => setDuration(e.target.value)}
-            className="w-full sm:w-64 px-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="w-full sm:w-64 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
           >
             <option value="">Select Duration</option>
             {durationOptions.map(opt => (
@@ -118,19 +118,19 @@ export default function LessonsToursSpecifications({
 
         {/* Reservation Days */}
         <div>
-          <div className="mb-4">
-            <h3 className="text-base font-medium text-gray-900 mb-2">Reservation Schedule</h3>
-            <p className="text-sm text-gray-600">Select your preferred dates and times</p>
+          <div className="mb-3 sm:mb-4">
+            <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1 sm:mb-2">Reservation Schedule</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Select your preferred dates and times</p>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {reservationDays.map((res, idx) => (
-              <div key={idx} className="border-b border-gray-200 pb-4 last:border-b-0">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">Day {idx + 1}</h4>
+              <div key={idx} className="border-b border-gray-200 pb-3 sm:pb-4 last:border-b-0">
+                <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">Day {idx + 1}</h4>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Date</label>
                     <select
                       value={res.date}
                       onChange={(e) => {
@@ -143,7 +143,7 @@ export default function LessonsToursSpecifications({
                           validateField('reservationDate', e.target.value, { index: idx });
                         }
                       }}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     >
                       <option value="">Select Date</option>
                       {schedules.map(schedule => {
@@ -163,12 +163,12 @@ export default function LessonsToursSpecifications({
                       })}
                     </select>
                     {errors[`reservation_date_${idx}`] && (
-                      <p className="mt-1 text-sm text-red-600">{errors[`reservation_date_${idx}`]}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-600">{errors[`reservation_date_${idx}`]}</p>
                     )}
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Time</label>
                     <select
                       value={res.time}
                       onChange={(e) => {
@@ -177,7 +177,7 @@ export default function LessonsToursSpecifications({
                         setReservationDays(newArr);
                       }}
                       disabled={!res.date}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="">Select Time</option>
                       {(() => {
@@ -196,7 +196,7 @@ export default function LessonsToursSpecifications({
                       })()}
                     </select>
                     {errors[`reservation_time_${idx}`] && (
-                      <p className="mt-1 text-sm text-red-600">{errors[`reservation_time_${idx}`]}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-600">{errors[`reservation_time_${idx}`]}</p>
                     )}
                   </div>
                 </div>

@@ -121,16 +121,16 @@ export default function BookingSummary({
     <div className="max-w-7xl">
       {/* Booking Summary */}
 
-      <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-l-4 border-emerald-400 rounded-lg p-4 mb-6 mt-12 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-l-4 border-emerald-400 rounded-lg p-3 sm:p-4 md:p-5 mb-4 sm:mb-5 md:mb-6 mt-8 sm:mt-10 md:mt-12 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 md:gap-4">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-green-500 rounded-lg flex items-center justify-center flex-shrink-0 self-center sm:self-auto">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold text-slate-800">Booking Summary</h2>
-            <p className="text-sm text-slate-600 mt-1">Please review your booking details</p>
+          <div className="text-center sm:text-left flex-1">
+            <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-slate-800 leading-tight">Booking Summary</h2>
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 mt-1 sm:mt-2 leading-relaxed">Please review your booking details</p>
           </div>
         </div>
       </div>
@@ -138,44 +138,44 @@ export default function BookingSummary({
       <div className="space-y-6">
         {/* Booking Summary Header */}
         <section className="w-full">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <h3 className="text-base font-medium text-gray-900 mb-4">Booking Overview</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm">
+            <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-3 sm:mb-4">Booking Overview</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
                   <span className="text-xs text-gray-500 block">Date</span>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-xs sm:text-sm font-medium text-gray-900">
                     {reservationDays.length === 1 ? reservationDays[0]?.date : reservationDays.map((r, i) => r.date).join(', ')}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
                   <span className="text-xs text-gray-500 block">Duration</span>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-xs sm:text-sm font-medium text-gray-900">
                     {duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days"}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
                 <div>
                   <span className="text-xs text-gray-500 block">Participants</span>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-xs sm:text-sm font-medium text-gray-900">
                     {adultCount > 0 ? `${adultCount} Adult` : ''}{adultCount > 0 && childrenCount > 0 ? ' | ' : ''}{childrenCount > 0 ? `${childrenCount} Children` : ''}
                   </span>
                 </div>
@@ -185,74 +185,74 @@ export default function BookingSummary({
         </section>
 
         {/* Customer Info */}
-        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h2 className="text-base font-medium text-gray-900">Customer Information</h2>
+            <h2 className="text-sm sm:text-base font-medium text-gray-900">Customer Information</h2>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Full Name</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.fullName}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Full Name</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.fullName}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Email</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.email}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Email</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.email}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Mobile</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.mobile}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Mobile</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.mobile}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Hotel</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.hotel}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Hotel</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.hotel}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Hotel Address</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.hotelAddress}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Hotel Address</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.hotelAddress}</span>
               </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Booking Name</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.bookingName}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Booking Name</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.bookingName}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Arrival</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.dateOfArrival}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Arrival</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.dateOfArrival}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Country</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.country}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Country</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.country}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Nationality</span>
-                <span className="text-sm font-medium text-gray-900">{customerInfo.nationality}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Nationality</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.nationality}</span>
               </div>
               <div className="flex justify-between items-start py-2 border-b border-gray-100">
-                <span className="text-sm text-gray-500">Notes</span>
-                <span className="text-sm font-medium text-gray-900 text-right">{customerInfo.notes}</span>
+                <span className="text-xs sm:text-sm text-gray-500">Notes</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900 text-right">{customerInfo.notes}</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* Selected Packages */}
-        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-lg flex items-center justify-center">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
             </div>
-            <h2 className="text-base font-medium text-gray-900">Selected Packages</h2>
+            <h2 className="text-sm sm:text-base font-medium text-gray-900">Selected Packages</h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {Object.keys(selectedPackages).length > 0 ? (
               Object.entries(selectedPackages).map(([recKey, rec]) => (
                 <SelectedPackagesCard
@@ -264,13 +264,13 @@ export default function BookingSummary({
                 />
               ))
             ) : (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="text-center py-6 sm:py-8">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                 </div>
-                <div className="text-gray-500 text-sm">No package selected yet.</div>
+                <div className="text-gray-500 text-xs sm:text-sm">No package selected yet.</div>
                 <div className="text-gray-400 text-xs mt-1">Please select packages from the booking form</div>
               </div>
             )}
@@ -279,21 +279,21 @@ export default function BookingSummary({
 
         {/* Participant Details */}
         <section className="bg-white rounded-xl border shadow-sm p-4 sm:p-6">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800 border-b border-gray-200 pb-3 mb-4 sm:mb-6">Participant Details</h2>
-          <div className="space-y-4">
+          <h2 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 sm:pb-3 mb-3 sm:mb-4 md:mb-6">Participant Details</h2>
+          <div className="space-y-3 sm:space-y-4">
             {/* Adults */}
             {formData.adults.filter((adult: any) => adult.name.trim() !== "").length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Adults</h3>
-                <div className="space-y-3">
+                <h3 className="text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">Adults</h3>
+                <div className="space-y-2 sm:space-y-3">
                   {formData.adults.filter((adult: any) => adult.name.trim() !== "").map((adult: any, idx: number) => (
-                    <div key={idx} className="p-3 bg-gray-50 rounded-lg">
+                    <div key={idx} className="p-2 sm:p-3 bg-gray-50 rounded-lg">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="font-medium text-gray-800">{adult.name}</div>
-                          <div className="text-sm text-gray-600">Level: {adult.level}</div>
+                          <div className="font-medium text-gray-800 text-xs sm:text-sm">{adult.name}</div>
+                          <div className="text-xs sm:text-sm text-gray-600">Level: {adult.level}</div>
                           {adult.medical && adult.medical.length > 0 && adult.medical[0] !== "no_medical" && (
-                            <div className="text-sm text-orange-600 mt-1">
+                            <div className="text-xs sm:text-sm text-orange-600 mt-1">
                               ⚠️ Medical conditions: {adult.medical.join(", ")}
                               {adult.medical_other && ` - ${adult.medical_other}`}
                             </div>
@@ -318,16 +318,16 @@ export default function BookingSummary({
             {/* Children */}
             {formData.children.filter((child: any) => child.name.trim() !== "").length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Children</h3>
-                <div className="space-y-3">
+                <h3 className="text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">Children</h3>
+                <div className="space-y-2 sm:space-y-3">
                   {formData.children.filter((child: any) => child.name.trim() !== "").map((child: any, idx: number) => (
-                    <div key={idx} className="p-3 bg-gray-50 rounded-lg">
+                    <div key={idx} className="p-2 sm:p-3 bg-gray-50 rounded-lg">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="font-medium text-gray-800">{child.name}</div>
-                          <div className="text-sm text-gray-600">Level: {child.level}</div>
+                          <div className="font-medium text-gray-800 text-xs sm:text-sm">{child.name}</div>
+                          <div className="text-xs sm:text-sm text-gray-600">Level: {child.level}</div>
                           {child.medical && child.medical.length > 0 && child.medical[0] !== "no_medical" && (
-                            <div className="text-sm text-orange-600 mt-1">
+                            <div className="text-xs sm:text-sm text-orange-600 mt-1">
                               ⚠️ Medical conditions: {child.medical.join(", ")}
                               {child.medical_other && ` - ${child.medical_other}`}
                             </div>
@@ -352,16 +352,16 @@ export default function BookingSummary({
         </section>
 
         {/* Promo Code Section */}
-        <section className="bg-gray-50 rounded-lg p-4 sm:p-6">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-3 sm:mb-4">Promo Code</h3>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-start">
+        <section className="bg-gray-50 rounded-lg p-3 sm:p-4 md:p-6">
+          <h3 className="text-xs sm:text-sm md:text-base font-semibold text-gray-800 mb-2 sm:mb-3 md:mb-4">Promo Code</h3>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 items-start sm:items-start">
             <div className="flex-1">
               <Input
                 type="text"
                 value={promoCode}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPromoCode(e.target.value)}
                 placeholder="Enter promo code"
-                className="w-full text-sm sm:text-base"
+                className="w-full text-xs sm:text-sm md:text-base"
               />
               {promoMessage && (
                 <div
@@ -375,7 +375,7 @@ export default function BookingSummary({
             </div>
             <Button
               type="button"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-semibold px-6 py-2 w-full sm:w-auto"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base font-semibold px-4 sm:px-6 py-2 w-full sm:w-auto"
               onClick={applyVoucher}
             >
               Apply Code
@@ -384,32 +384,32 @@ export default function BookingSummary({
         </section>
 
         {/* Total Amount Section */}
-        <section className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">Payment Summary</h3>
-          <div className="space-y-3">
+        <section className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 md:p-6 shadow-sm">
+          <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Payment Summary</h3>
+          <div className="space-y-2 sm:space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm sm:text-base text-gray-600">Subtotal</span>
-              <span className={`text-base sm:text-lg font-semibold ${voucherData ? "line-through text-gray-400" : "text-gray-900"}`}>
+              <span className="text-xs sm:text-sm md:text-base text-gray-600">Subtotal</span>
+              <span className={`text-sm sm:text-base md:text-lg font-semibold ${voucherData ? "line-through text-gray-400" : "text-gray-900"}`}>
                 {getDisplayPrice(totalAmount)}
               </span>
             </div>
             {voucherData && (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm sm:text-base text-green-600">
+                  <span className="text-xs sm:text-sm md:text-base text-green-600">
                     Discount ({voucherData.discount_type === "percentage"
                       ? `${voucherData.discount_value}%`
                       : getDisplayPrice(voucherData.discount_amount)}
                     )
                   </span>
-                  <span className="text-sm sm:text-base text-green-600 font-semibold">
+                  <span className="text-xs sm:text-sm md:text-base text-green-600 font-semibold">
                     -{getDisplayPrice(voucherData.discount_amount)}
                   </span>
                 </div>
-                <div className="border-t border-gray-200 pt-3">
+                <div className="border-t border-gray-200 pt-2 sm:pt-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-base sm:text-lg font-semibold text-gray-800">Total Amount</span>
-                    <span className="text-lg sm:text-xl font-bold text-green-600">
+                    <span className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Total Amount</span>
+                    <span className="text-base sm:text-lg md:text-xl font-bold text-green-600">
                       {getDisplayPrice(voucherData.net_amount)}
                     </span>
                   </div>
@@ -417,10 +417,10 @@ export default function BookingSummary({
               </>
             )}
             {!voucherData && (
-              <div className="border-t border-gray-200 pt-3">
+              <div className="border-t border-gray-200 pt-2 sm:pt-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-base sm:text-lg font-semibold text-gray-800">Total Amount</span>
-                  <span className="text-lg sm:text-xl font-bold text-gray-900">
+                  <span className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Total Amount</span>
+                  <span className="text-base sm:text-lg md:text-xl font-bold text-gray-900">
                     {getDisplayPrice(totalAmount)}
                   </span>
                 </div>
@@ -443,35 +443,35 @@ export default function BookingSummary({
         </section> */}
 
         {/* Agent Selection */}
-        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Agent Selection</h2>
+            <h2 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900">Agent Selection</h2>
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Agent Code Input */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="space-y-2 sm:space-y-3">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 Enter Agent Code (Optional)
               </label>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <input
                   type="text"
                   value={agentCode}
                   onChange={(e) => setAgentCode(e.target.value.toUpperCase())}
                   placeholder="Enter agent code (e.g., AGT001)"
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
+                  className="flex-1 px-2 sm:px-3 md:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs sm:text-sm transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => fetchAgentByCode(agentCode)}
                   disabled={!agentCode.trim() || loadingAgent}
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2 transition-colors text-sm sm:text-base"
+                  className="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm md:text-base"
                 >
                   {loadingAgent ? (
                     <>
@@ -601,14 +601,14 @@ export default function BookingSummary({
         </section>
 
         {/* Payment Method */}
-        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Payment Method</h2>
+            <h2 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900">Payment Method</h2>
           </div>
           
           {/* Warning if participants haven't selected packages */}
@@ -636,20 +636,20 @@ export default function BookingSummary({
             </div>
           )}
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Payment Method Inputs for Agent */}
             {selectedAgent ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
                     </svg>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">Enter payment amounts for each method:</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Enter payment amounts for each method:</span>
                 </div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                   {availablePaymentMethods.map((method) => {
                     const currentAmount = splitPayments.find(p => p.method === method.code)?.amount || 0;
                     const maxSaldo = selectedAgent?.saldo ? parseFloat(selectedAgent.saldo) : 0;
@@ -657,21 +657,21 @@ export default function BookingSummary({
                     const isOverLimit = isSaldo && currentAmount > maxSaldo;
                     
                     return (
-                      <div key={method.code} className="border border-gray-200 rounded-xl p-5 hover:border-blue-300 transition-all duration-200 shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
+                      <div key={method.code} className="border border-gray-200 rounded-xl p-3 sm:p-5 hover:border-blue-300 transition-all duration-200 shadow-sm">
+                        <div className="flex items-center justify-between mb-3 sm:mb-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                 </svg>
                               </div>
-                              <span className="text-base font-semibold text-gray-900">{method.label}</span>
+                              <span className="text-sm sm:text-base font-semibold text-gray-900">{method.label}</span>
                             </div>
-                            <div className="text-sm text-gray-600">{method.description}</div>
+                            <div className="text-xs sm:text-sm text-gray-600">{method.description}</div>
                             {isSaldo && maxSaldo > 0 && (
-                              <div className="flex items-center gap-2 text-sm text-blue-600 mt-2 font-medium">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="flex items-center gap-2 text-xs sm:text-sm text-blue-600 mt-2 font-medium">
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                                 </svg>
                                 <span>Available: {getDisplayPrice(maxSaldo)}</span>
@@ -679,8 +679,8 @@ export default function BookingSummary({
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-medium text-gray-700">Amount:</span>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <span className="text-xs sm:text-sm font-medium text-gray-700">Amount:</span>
                           <input
                             type="number"
                             placeholder="0"
@@ -698,13 +698,13 @@ export default function BookingSummary({
                               
                               setSplitPayments(newPayments);
                             }}
-                            className={`w-32 px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                            className={`w-24 sm:w-32 px-2 sm:px-3 py-2 text-xs sm:text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                               isOverLimit ? 'border-red-400 bg-red-50' : 'border-gray-300'
                             }`}
                           />
                           {isOverLimit && (
-                            <div className="flex items-center gap-1 text-sm text-red-600 font-medium">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex items-center gap-1 text-xs sm:text-sm text-red-600 font-medium">
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                               </svg>
                               <span>Over limit</span>
@@ -718,20 +718,20 @@ export default function BookingSummary({
               </div>
             ) : (
               /* Default Payment Methods (Radio buttons) */
-                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                   {availablePaymentMethods.map((method) => (
-                    <label key={method.code} className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors bg-white shadow-sm">
+                    <label key={method.code} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors bg-white shadow-sm">
                       <input
                         type="radio"
                         name="paymentMethod"
                         value={method.code}
                         checked={paymentMethod === method.code}
                         onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
                       <div>
-                        <span className="text-base font-bold text-gray-800">{method.label}</span>
-                        <div className="text-sm text-gray-600 mt-1">{method.description}</div>
+                        <span className="text-sm sm:text-base font-bold text-gray-800">{method.label}</span>
+                        <div className="text-xs sm:text-sm text-gray-600 mt-1">{method.description}</div>
                       </div>
                     </label>
                   ))}
@@ -740,7 +740,7 @@ export default function BookingSummary({
 
             {/* Payment Summary for Agent */}
             {selectedAgent && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -848,8 +848,8 @@ export default function BookingSummary({
         </section>
 
         {/* Terms and Payment */}
-        <section className="space-y-4 sm:space-y-6">
-          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+        <section className="space-y-3 sm:space-y-4 md:space-y-6">
+          <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
             <input
               type="checkbox"
               checked={agreeTerms}
@@ -857,7 +857,7 @@ export default function BookingSummary({
               className="mt-0.5"
             />
             <div className="flex-1">
-              <span className="text-sm sm:text-base text-gray-700">
+              <span className="text-xs sm:text-sm md:text-base text-gray-700">
                 I agree to the <a href="#" className="text-blue-600 underline hover:text-blue-800">Terms and Conditions</a> and acknowledge that I have read the important information above.
               </span>
               {errors.agreeTerms && (
@@ -868,11 +868,34 @@ export default function BookingSummary({
           
           <div className="flex justify-end">
             <Button 
-              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm sm:text-base px-8 py-3 sm:px-12 sm:py-4 shadow-lg hover:shadow-xl transition-all duration-200" 
+              className={`
+                relative overflow-hidden group
+                bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
+                text-white font-semibold 
+                text-xs sm:text-sm md:text-base
+                px-4 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 
+                shadow-lg hover:shadow-xl 
+                transition-all duration-300 ease-in-out
+                transform hover:scale-105 active:scale-95
+                border-0 rounded-lg
+                w-full sm:w-auto
+                ${!agreeTerms ? 'opacity-50 cursor-not-allowed grayscale' : ''}
+              `}
               onClick={handlePayment}
               disabled={!agreeTerms}
             >
-              Proceed to Payment
+              <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <span className="relative z-10 whitespace-nowrap">
+                  <span className="hidden sm:inline">Pay Now</span>
+                  <span className="sm:hidden">Pay Now</span>
+                </span>
+              </div>
+              
+              {/* Animated background effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
             </Button>
           </div>
         </section>

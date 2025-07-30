@@ -93,7 +93,6 @@ export default function SurfSchoolBooking() {
   const [selectedPackages, setSelectedPackages] = useState<{ [key: string]: any }>({});
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loadingSchedules, setLoadingSchedules] = useState(false);
-  const [recommendedFromApi, setRecommendedFromApi] = useState<any[]>([]);
 
   const [draftData, setDraftData] = useState<any>(null);
 
@@ -140,6 +139,11 @@ export default function SurfSchoolBooking() {
       
       if (data.success) {
         setMasterData(data.data); // Store raw master data
+        
+        // Console log untuk debugging
+        console.log('SurfSchoolBooking - Master data received:', data.data);
+        console.log('SurfSchoolBooking - Packages:', data.data.packages);
+        console.log('SurfSchoolBooking - Agents:', data.data.agents);
         
         // Store agents data if available
         if (data.data.agents) {
@@ -381,6 +385,32 @@ export default function SurfSchoolBooking() {
 
   // Handler when a package is selected
   function handleSelect(rec: any) {
+    // Validasi nama sebelum memilih paket
+    const missingNames: string[] = [];
+    
+    rec.people.forEach((personName: string) => {
+      // Skip jika nama kosong atau hanya whitespace
+      if (!personName || personName.trim() === "") {
+        missingNames.push("Participant");
+        return;
+      }
+      
+      // Cari participant berdasarkan nama
+      const adult = formData.adults.find((a: any) => a.name === personName);
+      const child = formData.children.find((c: any) => c.name === personName);
+      
+      if (!adult && !child) {
+        missingNames.push(personName);
+      }
+    });
+    
+    if (missingNames.length > 0) {
+      const participantType = missingNames.length === 1 ? 'participant' : 'participants';
+      const namesList = missingNames.includes("Participant") ? "participant" : missingNames.join(', ');
+      showAlert(`Please fill in the name for ${participantType}: ${namesList}`);
+      return;
+    }
+    
     const isIndividual = rec.people.length === 1;
     const isPeer = rec.people.length > 1;
     let newSelected = { ...selectedPackages };
@@ -973,7 +1003,6 @@ export default function SurfSchoolBooking() {
     setSelectedPackages({});
     setSchedules([]);
     setLoadingSchedules(false);
-    setRecommendedFromApi([]);
     setDraftData(null);
     setAgentCode('');
     setSelectedAgent(null);
@@ -1476,7 +1505,6 @@ export default function SurfSchoolBooking() {
               getRecKey={getRecKey}
               handleSelect={handleSelect}
               handleCancel={handleCancel}
-              recommendedFromApi={recommendedFromApi}
               validateField={validateField}
             />
 
