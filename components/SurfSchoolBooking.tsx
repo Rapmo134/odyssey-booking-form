@@ -14,7 +14,8 @@ import {
   getCheckDraftsUrl,
   getPaymentStatusUrl,
   API_CONFIG,
-  MIDTRANS_CONFIG
+  MIDTRANS_CONFIG,
+  PAYPAL_CONFIG
 } from "@/lib/config"
 import BookingHeader from "./BookingHeader"
 import BookingFooter from "./BookingFooter"
@@ -24,6 +25,8 @@ import ParticipantForm from "./ParticipantForm"
 import LessonsToursSpecifications from "./LessonsToursSpecifications"
 import LoadingSpinner from "./LoadingSpinner"
 import BookingSuccessModal from "./BookingSuccessModal"
+import PayPalModal from "./PayPalModal"
+import { AlertContainer } from "./AlertToast"
 
 type ActivityKey = "surfLessons" | "surfTours";
 
@@ -163,7 +166,7 @@ export default function SurfSchoolBooking() {
     try {
       // Validate input
       if (!code || code.trim() === '') {
-        showAlert('Please enter an agent code');
+        showAlert('Please enter an agent code', 'warning');
         return;
       }
 
@@ -189,16 +192,16 @@ export default function SurfSchoolBooking() {
         if (agent) {
           setSelectedAgent(agent);
           setAgentCode(code.toUpperCase());
-          showAlert(`Agent ${agent.name} found successfully!`);
+          showAlert(`Agent ${agent.name} found successfully!`, 'success');
         } else {
           // Agent not found - this is normal, not an error
-          showAlert(`Agent with code "${code.toUpperCase()}" not found. Please check the code and try again.`);
+          showAlert(`Agent with code "${code.toUpperCase()}" not found. Please check the code and try again.`, 'warning');
           setSelectedAgent(null);
           setAgentCode(code.toUpperCase());
         }
       } else {
         console.error('Failed to fetch master data:', data.message);
-        showAlert('Unable to fetch agent data. Please try again later.');
+        showAlert('Unable to fetch agent data. Please try again later.', 'error');
         setSelectedAgent(null);
       }
     } catch (error: any) {
@@ -206,12 +209,12 @@ export default function SurfSchoolBooking() {
       
       // Handle different types of errors
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        showAlert('Network error. Please check your internet connection and try again.');
-      } else if (error.message.includes('HTTP error')) {
-        showAlert('Server error. Please try again later.');
-      } else {
-        showAlert('An unexpected error occurred. Please try again.');
-      }
+        showAlert('Network error. Please check your internet connection and try again.', 'error');
+              } else if (error.message.includes('HTTP error')) {
+          showAlert('Server error. Please try again later.', 'error');
+        } else {
+          showAlert('An unexpected error occurred. Please try again.', 'error');
+        }
       
       setSelectedAgent(null);
     } finally {
@@ -339,7 +342,7 @@ export default function SurfSchoolBooking() {
   const [selectedActivityType, setSelectedActivityType] = useState<"individual" | "peer" | null>(null);
   
   // State for last alert message
-  const [alerts, setAlerts] = useState<string[]>([]);
+  const [alerts, setAlerts] = useState<Array<{ id: string; message: string; type: 'success' | 'error' | 'warning' | 'info' }>>([]);
 
   // State for booking success modal
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -358,6 +361,9 @@ export default function SurfSchoolBooking() {
   const [snapToken, setSnapToken] = useState<string | null>(null);
   const [showMidtransModal, setShowMidtransModal] = useState(false);
 
+  // State for PayPal payment
+  const [showPayPalModal, setShowPayPalModal] = useState(false);
+
   // Add payment status checking states
   const [paymentStatus, setPaymentStatus] = useState<string>('');
   const [isCheckingPayment, setIsCheckingPayment] = useState(false);
@@ -371,10 +377,11 @@ export default function SurfSchoolBooking() {
   const [showPaymentDeniedModal, setShowPaymentDeniedModal] = useState(false);
 
   // Toast alert function
-  function showAlert(msg: string) {
-    setAlerts(alerts => [...alerts, msg]);
+  function showAlert(msg: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') {
+    const id = Date.now().toString();
+    setAlerts(alerts => [...alerts, { id, message: msg, type }]);
     setTimeout(() => {
-      setAlerts(alerts => alerts.slice(1));
+      setAlerts(alerts => alerts.filter(alert => alert.id !== id));
     }, 4000);
   }
 
@@ -407,7 +414,7 @@ export default function SurfSchoolBooking() {
     if (missingNames.length > 0) {
       const participantType = missingNames.length === 1 ? 'participant' : 'participants';
       const namesList = missingNames.includes("Participant") ? "participant" : missingNames.join(', ');
-      showAlert(`Please fill in the name for ${participantType}: ${namesList}`);
+      showAlert(`Please fill in the name for ${participantType}: ${namesList}`, 'warning');
       return;
     }
     
@@ -582,7 +589,7 @@ export default function SurfSchoolBooking() {
     if (Object.keys(validationErrors).length > 0) {
       // Show toast with validation errors
       const errorMessages = Object.values(validationErrors).join('\n');
-      showAlert(`Please complete the following data:\n\n${errorMessages}`);
+      showAlert(`Please complete the following data:\n\n${errorMessages}`, 'error');
       return;
     }
   
@@ -593,7 +600,7 @@ export default function SurfSchoolBooking() {
       setDraftData?.(draft);
       
       if (draft?.count > 0) {
-        showAlert(`There are ${draft.count} draft bookings for agent ${currentAgentCode}. Please complete or delete drafts before creating a new booking.`);
+        showAlert(`There are ${draft.count} draft bookings for agent ${currentAgentCode}. Please complete or delete drafts before creating a new booking.`, 'warning');
         return;
       }
   
@@ -677,14 +684,14 @@ export default function SurfSchoolBooking() {
         // Validate split payment total
         const totalSplitAmount = paid_b + paid_c + paid_o + paid_s;
         if (totalSplitAmount !== nett) {
-          showAlert(`Split payment total (${getDisplayPrice(totalSplitAmount)}) must equal total amount (${getDisplayPrice(nett)})`);
+          showAlert(`Split payment total (${getDisplayPrice(totalSplitAmount)}) must equal total amount (${getDisplayPrice(nett)})`, 'error');
           return;
         }
         
         // Validate saldo limit
         const maxSaldo = selectedAgent?.saldo ? parseFloat(selectedAgent.saldo) : 0;
         if (paid_s > maxSaldo) {
-          showAlert(`Saldo payment (${getDisplayPrice(paid_s)}) exceeds available balance (${getDisplayPrice(maxSaldo)})`);
+          showAlert(`Saldo payment (${getDisplayPrice(paid_s)}) exceeds available balance (${getDisplayPrice(maxSaldo)})`, 'error');
           return;
         }
       } else {
@@ -771,10 +778,33 @@ export default function SurfSchoolBooking() {
           });
           setShowSuccessModal(true);
         } else {
-          // Midtrans payment - handle snap token
-          if (data.data && data.data.snap_token) {
-            setSnapToken(data.data.snap_token);
-            setShowMidtransModal(true);
+          // Handle different payment methods
+          if (paymentMethod === 'midtrans') {
+            // Midtrans payment - handle snap token
+            if (data.data && data.data.snap_token) {
+              setSnapToken(data.data.snap_token);
+              setShowMidtransModal(true);
+              
+              // Show success modal with payment info
+              const bookingDetails = {
+                date: reservationDays?.[0]?.date || "N/A",
+                duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
+                participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
+                totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
+                customerName: formData2?.fullName || "N/A"
+              };
+
+              setSuccessBookingData({
+                bookingNumber,
+                bookingDetails
+              });
+              setShowSuccessModal(true);
+            } else {
+              showAlert("Booking created but payment token not received. Please contact support.", 'error');
+            }
+          } else if (paymentMethod === 'paypal') {
+            // PayPal payment - show PayPal modal
+            setShowPayPalModal(true);
             
             // Show success modal with payment info
             const bookingDetails = {
@@ -790,15 +820,13 @@ export default function SurfSchoolBooking() {
               bookingDetails
             });
             setShowSuccessModal(true);
-          } else {
-            showAlert("Booking created but payment token not received. Please contact support.");
           }
         }
       } else {
-        showAlert(data.message || "Booking failed");
+        showAlert(data.message || "Booking failed", 'error');
       }
     } catch (err: any) {
-      showAlert(err?.message || "An error occurred while processing the booking.");
+      showAlert(err?.message || "An error occurred while processing the booking.", 'error');
       console.error("Booking error:", err);
     }
   }
@@ -924,16 +952,19 @@ export default function SurfSchoolBooking() {
         setPromoMessage(data.message || "Voucher not valid.");
         setPromoSuccess(false);
         setVoucherData(null);
+        showAlert(data.message || "Voucher not valid.", 'error');
         return;
       }
 
       setPromoMessage(data.data?.message || data.message || "Voucher applied successfully!");
       setPromoSuccess(true);
       setVoucherData(data.data);
+      showAlert("Voucher applied successfully!", 'success');
     } catch (err) {
       setPromoMessage("Failed to apply voucher. Please try again.");
       setPromoSuccess(false);
       setVoucherData(null);
+      showAlert("Failed to apply voucher. Please try again.", 'error');
     }
   }
 
@@ -1185,7 +1216,55 @@ export default function SurfSchoolBooking() {
       }
     } else {
       console.error('Midtrans Snap not loaded');
-      showAlert('Payment system not ready. Please refresh the page and try again.');
+      showAlert('Payment system not ready. Please refresh the page and try again.', 'error');
+    }
+  };
+
+  // Add function to handle PayPal payment
+  const handlePayPalPayment = async (paymentDetails: any, bookingNumber: string) => {
+    try {
+      console.log('PayPal payment details:', paymentDetails);
+      
+      // Here you would typically send the payment details to your backend
+      // to verify and process the payment
+      const response = await fetch(getPaymentStatusUrl(), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_CONFIG.TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          booking_number: bookingNumber,
+          payment_id: paymentDetails.id,
+          payment_status: 'success',
+          payment_method: 'paypal'
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Show success modal
+        const bookingDetails = {
+          date: reservationDays?.[0]?.date || "N/A",
+          duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
+          participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
+          totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
+          customerName: formData2?.fullName || "N/A"
+        };
+
+        setSuccessBookingData({
+          bookingNumber,
+          bookingDetails
+        });
+        setShowSuccessModal(true);
+        setShowPayPalModal(false);
+      } else {
+        showAlert('Payment verification failed. Please contact support.', 'error');
+      }
+    } catch (error) {
+      console.error('Error processing PayPal payment:', error);
+      showAlert('Payment processing failed. Please try again.', 'error');
     }
   };
 
@@ -1467,8 +1546,8 @@ export default function SurfSchoolBooking() {
                   <Star className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Your Surf Booking</h1>
-                  <p className="text-sm text-gray-600 mt-1">Complete your surfing adventure</p>
+                  <h1 className="text-lg sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900">Your Surf Booking</h1>
+                  <p className="text-sm sm:text-sm md:text-base text-gray-600 mt-1">Complete your surfing adventure</p>
                 </div>
               </div>
             </div>
@@ -1509,13 +1588,10 @@ export default function SurfSchoolBooking() {
             />
 
             {/* Toast Alert Container */}
-            <div className="fixed bottom-6 right-6 z-50 space-y-2">
-              {alerts.map((msg, i) => (
-                <div key={i} className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded px-4 py-3 shadow">
-                  {msg}
-                </div>
-              ))}
-            </div>
+            <AlertContainer 
+              alerts={alerts}
+              onRemove={(id: string) => setAlerts(alerts => alerts.filter(alert => alert.id !== id))}
+            />
 
             <CustomerInformationForm 
               formData2={formData2} 
@@ -1583,14 +1659,6 @@ export default function SurfSchoolBooking() {
       </div>
 
       <BookingFooter />
-
-      {/* Tampilkan error global jika ada */}
-      {errors.selectedPackages && (
-        <div className="text-red-500 text-sm mb-2">{errors.selectedPackages}</div>
-      )}
-      {errors.participants && (
-        <div className="text-red-500 text-sm mb-2">{errors.participants}</div>
-      )}
 
       {/* Booking Success Modal */}
       {successBookingData && (
@@ -2089,6 +2157,23 @@ export default function SurfSchoolBooking() {
            </div>
          </div>
        )}
+
+      {/* PayPal Payment Modal */}
+      <PayPalModal
+        isOpen={showPayPalModal}
+        onClose={() => setShowPayPalModal(false)}
+        amount={voucherData?.net_amount || totalAmount}
+        bookingCode={successBookingData?.bookingNumber || ''}
+        onSuccess={(paymentDetails) => {
+          const bookingNumber = successBookingData?.bookingNumber || '';
+          handlePayPalPayment(paymentDetails, bookingNumber);
+        }}
+        onError={(error) => {
+          console.error('PayPal payment error:', error);
+          showAlert('PayPal payment failed. Please try again.', 'error');
+          setShowPayPalModal(false);
+        }}
+      />
     </div>
   )
 } 

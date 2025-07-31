@@ -24,6 +24,16 @@ export const MIDTRANS_CONFIG = {
     : 'https://app.sandbox.midtrans.com'
 };
 
+// PayPal Configuration
+export const PAYPAL_CONFIG = {
+  CLIENT_ID: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
+  IS_PRODUCTION: process.env.NEXT_PUBLIC_PAYPAL_PRODUCTION === 'true',
+  BASE_URL: process.env.NEXT_PUBLIC_PAYPAL_PRODUCTION === 'true'
+    ? 'https://www.paypal.com'
+    : 'https://www.sandbox.paypal.com',
+  SCRIPT_URL: 'https://www.paypal.com/sdk/js'
+};
+
 // Build full URL for endpoints
 export const getApiUrl = (endpoint: string) => {
   return `${API_CONFIG.BASE_URL}${endpoint}`;

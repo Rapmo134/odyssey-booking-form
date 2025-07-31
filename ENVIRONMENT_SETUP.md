@@ -29,12 +29,17 @@ NEXT_PUBLIC_MIDTRANS_SERVER_KEY=your_midtrans_server_key_here
 NEXT_PUBLIC_MIDTRANS_PRODUCTION=false
 ```
 
+### PayPal Payment Gateway
+```env
+# PayPal Client ID
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
+
+# PayPal Environment (true for production, false for sandbox)
+NEXT_PUBLIC_PAYPAL_PRODUCTION=false
+```
+
 ### Optional Configuration
 ```env
-# PayPal Configuration (if using PayPal)
-NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
-NEXT_PUBLIC_PAYPAL_SECRET=your_paypal_secret_here
-
 # Database Configuration (if needed)
 DATABASE_URL=your_database_url_here
 
