@@ -1,9 +1,11 @@
+import { useEffect } from "react"
 import { Button } from "./ui/button"
 import { Checkbox } from "./ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import { Input } from "./ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import SelectedPackagesCard from "./SelectedPackagesCard"
+import CurrencySelector from "./CurrencySelector"
 
 interface BookingSummaryProps {
   reservationDays: any[]
@@ -38,6 +40,9 @@ interface BookingSummaryProps {
   // Split payment props
   splitPayments: any[]
   setSplitPayments: (payments: any[]) => void
+  currency: string
+  setCurrency: (currency: string) => void
+  onRateChange: (rate: number) => void
 }
 
 export default function BookingSummary({ 
@@ -70,8 +75,20 @@ export default function BookingSummary({
   fetchAgentByCode,
   loadingAgent,
   splitPayments,
-  setSplitPayments
+  setSplitPayments,
+  currency,
+  setCurrency,
+  onRateChange
 }: BookingSummaryProps) {
+  
+  // Reset selectedAgent when currency changes to USD
+  useEffect(() => {
+    if (currency === 'USD' && selectedAgent) {
+      setSelectedAgent(null);
+      setAgentCode('');
+      setSplitPayments([]);
+    }
+  }, [currency, selectedAgent, setSelectedAgent, setAgentCode, setSplitPayments]);
   
   // Check if all participants have packages
   const allParticipantNames = [
@@ -89,25 +106,39 @@ export default function BookingSummary({
 
   const canProceedToPayment = participantsWithoutPackages.length === 0;
 
-  // Determine available payment methods based on agent
+  // Determine available payment methods based on currency and agent
   const getAvailablePaymentMethods = () => {
-    if (selectedAgent) {
-      // Agent is selected, use agent's payment methods
-      const agentPaymentMethods = selectedAgent.payment || '';
-      const methods = [];
-      
-      if (agentPaymentMethods.includes('B')) methods.push({ code: 'bank', label: 'Bank Transfer', description: 'BCA, Mandiri, BNI' });
-      if (agentPaymentMethods.includes('C')) methods.push({ code: 'credit_card', label: 'Credit', description: '' });
-      if (agentPaymentMethods.includes('O')) methods.push({ code: 'onsite', label: 'Onsite Payment', description: 'Pay at location' });
-      if (agentPaymentMethods.includes('S')) methods.push({ code: 'saldo', label: 'Saldo/Balance', description: 'Account balance' });
-      
-      return methods;
+    if (currency === 'USD') {
+      // USD currency only supports PayPal when NO agent is selected
+      if (selectedAgent) {
+        // Agent is selected with USD - this should not be allowed
+        // Return empty array to indicate no valid payment methods
+        return [];
+      } else {
+        // No agent selected with USD - show PayPal only
+        return [
+          { code: 'paypal', label: 'PayPal', description: 'International payment (USD)', icon: '💳' }
+        ];
+      }
     } else {
-      // No agent selected, use default payment methods (Midtrans/PayPal)
-      return [
-        { code: 'midtrans', label: 'Midtrans', description: 'Secure payment gateway' },
-        { code: 'paypal', label: 'PayPal', description: 'PayPal payment' }
-      ];
+      // IDR currency supports agent payments and Midtrans
+      if (selectedAgent) {
+        // Agent is selected, use agent's payment methods
+        const agentPaymentMethods = selectedAgent.payment || '';
+        const methods = [];
+        
+        if (agentPaymentMethods.includes('B')) methods.push({ code: 'bank', label: 'Bank Transfer', description: 'BCA, Mandiri, BNI', icon: '🏛️' });
+        if (agentPaymentMethods.includes('C')) methods.push({ code: 'credit_card', label: 'Credit Card', description: 'Local credit card', icon: '💳' });
+        if (agentPaymentMethods.includes('O')) methods.push({ code: 'onsite', label: 'Onsite Payment', description: 'Pay at location', icon: '🏪' });
+        if (agentPaymentMethods.includes('S')) methods.push({ code: 'saldo', label: 'Saldo/Balance', description: 'Account balance', icon: '💰' });
+        
+        return methods;
+      } else {
+        // No agent selected, use Midtrans for IDR
+        return [
+          { code: 'midtrans', label: 'Midtrans', description: 'Local payment gateway', icon: '🏦' }
+        ];
+      }
     }
   };
 
@@ -216,16 +247,20 @@ export default function BookingSummary({
                 <span className="text-xs sm:text-sm text-gray-500">Hotel Address</span>
                 <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.hotelAddress}</span>
               </div>
+              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                <span className="text-xs sm:text-sm text-gray-500">Room Number</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.roomNumber || "X"}</span>
+              </div>
             </div>
             <div className="space-y-3 sm:space-y-4">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-xs sm:text-sm text-gray-500">Booking Name</span>
                 <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.bookingName}</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              {/* <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-xs sm:text-sm text-gray-500">Arrival</span>
                 <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.dateOfArrival}</span>
-              </div>
+              </div> */}
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-xs sm:text-sm text-gray-500">Country</span>
                 <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.country}</span>
@@ -233,6 +268,10 @@ export default function BookingSummary({
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-xs sm:text-sm text-gray-500">Nationality</span>
                 <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.nationality}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                <span className="text-xs sm:text-sm text-gray-500">Hotel Transfer Service</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-900">{customerInfo.hotelTransfer}</span>
               </div>
               <div className="flex justify-between items-start py-2 border-b border-gray-100">
                 <span className="text-xs sm:text-sm text-gray-500">Notes</span>
@@ -383,6 +422,28 @@ export default function BookingSummary({
           </div>
         </section>
 
+        
+        <div className="mb-4">
+          <CurrencySelector currency={currency} setCurrency={setCurrency} onRateChange={onRateChange} />
+          
+          {/* Currency Info */}
+          <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs">💱</span>
+              </div>
+              <span className="text-sm font-semibold text-blue-800">Currency Information</span>
+            </div>
+            <div className="text-sm text-blue-700">
+              {currency === 'USD' ? (
+                <span>💳 <strong>USD Currency:</strong> PayPal available for international transactions (without agent). Agent payments are not available with USD currency.</span>
+              ) : (
+                <span>🏦 <strong>IDR Currency:</strong> Local payment methods (Agent + Midtrans) are available.</span>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Total Amount Section */}
         <section className="bg-white border border-gray-200 rounded-xl p-3 sm:p-4 md:p-6 shadow-sm">
           <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Payment Summary</h3>
@@ -442,16 +503,17 @@ export default function BookingSummary({
           </ul>
         </section> */}
 
-        {/* Agent Selection */}
-        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
-          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+        {/* Agent Selection - Hidden for USD currency */}
+        {currency !== 'USD' && (
+          <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h2 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900">Agent Selection</h2>
             </div>
-            <h2 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900">Agent Selection</h2>
-          </div>
           
           <div className="space-y-4 sm:space-y-6">
             {/* Agent Code Input */}
@@ -599,6 +661,7 @@ export default function BookingSummary({
             )}
           </div>
         </section>
+        )}
 
         {/* Payment Method */}
         <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
@@ -637,6 +700,25 @@ export default function BookingSummary({
           )}
 
           <div className="space-y-4 sm:space-y-6">
+            {/* Warning for USD + Agent combination */}
+            {currency === 'USD' && selectedAgent && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-red-800">Agent Not Available with USD</h4>
+                    <p className="text-sm text-red-700">
+                      Agent payments are not available with USD currency. Please switch to IDR currency to use agent payments.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Payment Method Inputs for Agent */}
             {selectedAgent ? (
               <div className="space-y-3 sm:space-y-4">
@@ -648,6 +730,18 @@ export default function BookingSummary({
                   </div>
                   <span className="text-xs sm:text-sm font-medium text-gray-700">Enter payment amounts for each method:</span>
                 </div>
+                
+                {/* Error message for agent payment method */}
+                {errors.paymentMethod && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      <span className="text-sm text-red-700 font-medium">{errors.paymentMethod}</span>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                   {availablePaymentMethods.map((method) => {
@@ -697,6 +791,11 @@ export default function BookingSummary({
                               }
                               
                               setSplitPayments(newPayments);
+                              
+                              // Update paymentMethod when user enters amount for agent payment
+                              if (amount > 0) {
+                                setPaymentMethod(method.code);
+                              }
                             }}
                             className={`w-24 sm:w-32 px-2 sm:px-3 py-2 text-xs sm:text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                               isOverLimit ? 'border-red-400 bg-red-50' : 'border-gray-300'
@@ -718,24 +817,29 @@ export default function BookingSummary({
               </div>
             ) : (
               /* Default Payment Methods (Radio buttons) */
-                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-                  {availablePaymentMethods.map((method) => (
-                    <label key={method.code} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors bg-white shadow-sm">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={method.code}
-                        checked={paymentMethod === method.code}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
-                      />
-                      <div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                {availablePaymentMethods.map((method) => (
+                  <label key={method.code} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors bg-white shadow-sm">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value={method.code}
+                      checked={paymentMethod === method.code}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span className="text-lg">{method.icon}</span>
+                      </div>
+                      <div className="flex-1">
                         <span className="text-sm sm:text-base font-bold text-gray-800">{method.label}</span>
                         <div className="text-xs sm:text-sm text-gray-600 mt-1">{method.description}</div>
                       </div>
-                    </label>
-                  ))}
-                </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
             )}
 
             {/* Payment Summary for Agent */}
@@ -858,10 +962,16 @@ export default function BookingSummary({
             />
             <div className="flex-1">
               <span className="text-xs sm:text-sm md:text-base text-gray-700">
-                I agree to the <a href="#" className="text-blue-600 underline hover:text-blue-800">Terms and Conditions</a> and acknowledge that I have read the important information above.
+                I agree to the <a href="https://www.odysseysurfschool.com/terms-conditions/" target="_blank" className="text-blue-600 underline hover:text-blue-800">Terms and Conditions</a> and acknowledge that I have read the important information above.
               </span>
               {errors.agreeTerms && (
                 <div className="text-red-500 text-xs mt-2">{errors.agreeTerms}</div>
+              )}
+              {errors.paymentMethod && (
+                <div className="text-red-500 text-xs mt-2">{errors.paymentMethod}</div>
+              )}
+              {errors.splitPayment && (
+                <div className="text-red-500 text-xs mt-2">{errors.splitPayment}</div>
               )}
             </div>
           </div>
@@ -879,10 +989,10 @@ export default function BookingSummary({
                 transform hover:scale-105 active:scale-95
                 border-0 rounded-lg
                 w-full sm:w-auto
-                ${!agreeTerms ? 'opacity-50 cursor-not-allowed grayscale' : ''}
+                ${(!agreeTerms || !paymentMethod) ? 'opacity-50 cursor-not-allowed grayscale' : ''}
               `}
               onClick={handlePayment}
-              disabled={!agreeTerms}
+              disabled={!agreeTerms || !paymentMethod}
             >
               <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -11,8 +11,7 @@ import {
   getWithoutPaymentUrl,
   getApplyVoucherUrl,
   getGenerateNumberUrl,
-  getCheckDraftsUrl,
-  getPaymentStatusUrl,
+  getUpdatePaymentStatusUrl,
   API_CONFIG,
   MIDTRANS_CONFIG,
   PAYPAL_CONFIG
@@ -26,6 +25,7 @@ import LessonsToursSpecifications from "./LessonsToursSpecifications"
 import LoadingSpinner from "./LoadingSpinner"
 import BookingSuccessModal from "./BookingSuccessModal"
 import PayPalModal from "./PayPalModal"
+import BookingConfirmationModal from "./BookingConfirmationModal"
 import { AlertContainer } from "./AlertToast"
 
 type ActivityKey = "surfLessons" | "surfTours";
@@ -97,7 +97,7 @@ export default function SurfSchoolBooking() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loadingSchedules, setLoadingSchedules] = useState(false);
 
-  const [draftData, setDraftData] = useState<any>(null);
+
 
   // Agent and split payment states
   const [agentCode, setAgentCode] = useState<string>('');
@@ -144,14 +144,14 @@ export default function SurfSchoolBooking() {
         setMasterData(data.data); // Store raw master data
         
         // Console log untuk debugging
-        console.log('SurfSchoolBooking - Master data received:', data.data);
-        console.log('SurfSchoolBooking - Packages:', data.data.packages);
-        console.log('SurfSchoolBooking - Agents:', data.data.agents);
+        // console.log('SurfSchoolBooking - Master data received:', data.data);
+        // console.log('SurfSchoolBooking - Packages:', data.data.packages);
+        // console.log('SurfSchoolBooking - Agents:', data.data.agents);
         
         // Store agents data if available
         if (data.data.agents) {
           // Agents data is available in master data
-          console.log('Agents loaded from master data:', data.data.agents.length);
+          // console.log('Agents loaded from master data:', data.data.agents.length);
         }
       } else {
         console.error('Failed to fetch master data:', data.message);
@@ -361,13 +361,15 @@ export default function SurfSchoolBooking() {
   const [snapToken, setSnapToken] = useState<string | null>(null);
   const [showMidtransModal, setShowMidtransModal] = useState(false);
 
+
+
   // State for PayPal payment
   const [showPayPalModal, setShowPayPalModal] = useState(false);
+  const [showBookingConfirmationModal, setShowBookingConfirmationModal] = useState(false);
+  const [bookingConfirmationData, setBookingConfirmationData] = useState<any>(null);
+  const [isProcessingPayPal, setIsProcessingPayPal] = useState(false);
 
-  // Add payment status checking states
-  const [paymentStatus, setPaymentStatus] = useState<string>('');
-  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
-  const [paymentCheckInterval, setPaymentCheckInterval] = useState<NodeJS.Timeout | null>(null);
+
 
   // Add payment status modal states
   const [showPaymentFailedModal, setShowPaymentFailedModal] = useState(false);
@@ -475,18 +477,19 @@ export default function SurfSchoolBooking() {
   const allParticipantsSelected = allParticipantNames.length > 0 && allParticipantNames.every(isParticipantCovered);
   
   const [formData2, setFormData2] = useState({
-    title: "Mr",
-    fullName: "dfjhd",
-    email: "rapmo641@gmmail.com",
-    mobilePhone: "2332455",
-    hotel: "dfgd",
-    hotelAddress: "dfvd",
-    bookingName: "dfg",
-    dateOfArrival: "09-07-2025",
-    country: "Indonesia",
-    nationality: "dfdg",
+    title: "",
+    fullName: "",
+    email: "",
+    mobilePhone: "",
+    hotel: "",
+    hotelAddress: "",
+    bookingName: "",
+    dateOfArrival: "",
+    country: "",
+    nationality: "",
     hotelTransfer: "No",
-    notes: "vv",
+    roomNumber: "", // ✅ Added room number field
+    notes: "",
   })
 
   const [agreeAndContinue, setAgreeAndContinue] = useState(false)
@@ -575,11 +578,120 @@ export default function SurfSchoolBooking() {
       newErrors.selectedPackages = "Please select at least one package";
     }
 
+    // Validasi payment method
+    if (!paymentMethod) {
+      newErrors.paymentMethod = "Please select a payment method";
+    } else {
+      // Check if payment method is valid for selected currency and agent
+      if (currency === 'USD') {
+        if (selectedAgent) {
+          // USD + Agent: This combination is not allowed
+          newErrors.paymentMethod = "Agent payments are not available with USD currency. Please use IDR currency for agent payments.";
+        } else {
+          // USD + No Agent: Only PayPal allowed
+          if (paymentMethod !== 'paypal') {
+            newErrors.paymentMethod = "USD currency without agent only supports PayPal payments";
+          }
+        }
+      } else {
+        // IDR currency
+        if (paymentMethod === 'paypal') {
+          newErrors.paymentMethod = "PayPal only supports USD currency";
+        } else if (selectedAgent) {
+          // Validasi untuk agent payment
+          const agentPaymentMethods = selectedAgent.payment || '';
+          const availableMethods = [];
+          
+          if (agentPaymentMethods.includes('B')) availableMethods.push('bank');
+          if (agentPaymentMethods.includes('C')) availableMethods.push('credit_card');
+          if (agentPaymentMethods.includes('O')) availableMethods.push('onsite');
+          if (agentPaymentMethods.includes('S')) availableMethods.push('saldo');
+          
+          if (!availableMethods.includes(paymentMethod)) {
+            newErrors.paymentMethod = `Please select a valid payment method. Available methods: ${availableMethods.join(', ')}`;
+          }
+          
+          // Validasi untuk agent: pastikan setidaknya satu payment method dipilih
+          if (splitPayments.length === 0) {
+            newErrors.paymentMethod = "Please enter payment amount for at least one payment method";
+          } else {
+            // Validasi bahwa setidaknya satu payment method memiliki amount > 0
+            const hasValidPayment = splitPayments.some(payment => (payment.amount || 0) > 0);
+            if (!hasValidPayment) {
+              newErrors.paymentMethod = "Please enter payment amount for at least one payment method";
+            }
+          }
+          
+          // Validasi split payment jika ada
+          if (splitPayments.length > 0) {
+            const totalSplitAmount = splitPayments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
+            const netAmount = voucherData?.net_amount || totalAmount;
+            
+            if (totalSplitAmount !== netAmount) {
+              newErrors.splitPayment = `Split payment total (${getDisplayPrice(totalSplitAmount)}) must equal total amount (${getDisplayPrice(netAmount)})`;
+            }
+            
+            // Validasi saldo limit
+            const saldoPayment = splitPayments
+              .filter(payment => payment.method === 'saldo')
+              .reduce((sum, payment) => sum + (payment.amount || 0), 0);
+            const maxSaldo = selectedAgent?.saldo ? parseFloat(selectedAgent.saldo) : 0;
+            
+            if (saldoPayment > maxSaldo) {
+              newErrors.splitPayment = `Saldo payment (${getDisplayPrice(saldoPayment)}) exceeds available balance (${getDisplayPrice(maxSaldo)})`;
+            }
+          }
+        } else {
+          // Validasi untuk non-agent payment (Midtrans/PayPal)
+          const validNonAgentMethods = ['midtrans', 'paypal'];
+          if (!validNonAgentMethods.includes(paymentMethod)) {
+            newErrors.paymentMethod = "Please select a valid payment method (Midtrans or PayPal)";
+          }
+        }
+      }
+    }
+
     // Validasi payment
     if (!agreeTerms) newErrors.agreeTerms = "You must agree to the terms";
 
     return newErrors;
   }
+
+  // Get available payment methods based on currency and agent
+  const getAvailablePaymentMethods = () => {
+    if (currency === 'USD') {
+      // USD currency only supports PayPal when NO agent is selected
+      if (selectedAgent) {
+        // Agent is selected with USD - this should not be allowed
+        // Return empty array to indicate no valid payment methods
+        return [];
+      } else {
+        // No agent selected with USD - show PayPal only
+        return [
+          { code: 'paypal', name: 'PayPal', description: 'International payment (USD)', icon: '💳' }
+        ];
+      }
+    } else {
+      // IDR currency supports agent payments and Midtrans
+      if (selectedAgent) {
+        // Agent is selected, use agent's payment methods
+        const agentPaymentMethods = selectedAgent.payment || '';
+        const methods = [];
+        
+        if (agentPaymentMethods.includes('B')) methods.push({ code: 'bank', name: 'Bank Transfer', description: 'BCA, Mandiri, BNI', icon: '🏛️' });
+        if (agentPaymentMethods.includes('C')) methods.push({ code: 'credit_card', name: 'Credit Card', description: 'Local credit card', icon: '💳' });
+        if (agentPaymentMethods.includes('O')) methods.push({ code: 'onsite', name: 'Onsite Payment', description: 'Pay at location', icon: '🏪' });
+        if (agentPaymentMethods.includes('S')) methods.push({ code: 'saldo', name: 'Saldo/Balance', description: 'Account balance', icon: '💰' });
+        
+        return methods;
+      } else {
+        // No agent selected, use Midtrans for IDR
+        return [
+          { code: 'midtrans', name: 'Midtrans', description: 'Local payment gateway', icon: '🏦' }
+        ];
+      }
+    }
+  };
 
   // Handler tombol Payment
   async function handlePayment() {
@@ -594,16 +706,32 @@ export default function SurfSchoolBooking() {
     }
   
     try {
-      // 0. Check draft booking for agent_code
-      const currentAgentCode = selectedAgent?.code || "AGT001";
-      const draft = await checkDrafts("agent", currentAgentCode);
-      setDraftData?.(draft);
-      
-      if (draft?.count > 0) {
-        showAlert(`There are ${draft.count} draft bookings for agent ${currentAgentCode}. Please complete or delete drafts before creating a new booking.`, 'warning');
-        return;
+      // Handle PayPal payment separately
+      if (paymentMethod === 'paypal') {
+        // PayPal payment - show confirmation modal first
+        const bookingNumber = await generateBookingNumber();
+        const confirmationData = {
+          bookingNumber,
+          date: reservationDays?.[0]?.date || "N/A",
+          duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
+          participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
+          totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
+          customerName: formData2?.fullName || "N/A",
+          hotel: formData2?.hotel || "N/A",
+          hotelAddress: formData2?.hotelAddress || "N/A",
+          bookingName: formData2?.bookingName || "N/A",
+          hotelTransfer: formData2?.hotelTransfer || "N/A",
+          packages: Object.values(selectedPackages || {}).map((pkg: any) => ({
+            name: pkg.pkg?.title || "N/A",
+            price: pkg.pkg?.price || 0
+          }))
+        };
+
+        setBookingConfirmationData(confirmationData);
+        setShowBookingConfirmationModal(true);
+        return; // Skip the general booking API call for PayPal
       }
-  
+
       // 1. Generate booking number
       const bookingNumber = await generateBookingNumber();
   
@@ -726,7 +854,7 @@ export default function SurfSchoolBooking() {
         agent: selectedAgent ? "Y" : "N",
         agent_code: selectedAgent?.code || "AGT001",
         comm: 0,
-        member_code: "MEM001",
+        member_code: null,
         member_type: "I",
         qty: totalQty,
         gross,
@@ -743,11 +871,31 @@ export default function SurfSchoolBooking() {
         save_as_draft: false,
         booking_details,
         booking_persons,
+        email: formData2?.email || "",
+        phone: formData2?.mobilePhone || "",
+        country: formData2?.country || "", // ✅ Added country from Customer Information
+        room_number: formData2?.roomNumber || "", // ✅ Added room number from Customer Information
+        hotel_transport_requested: formData2?.hotelTransfer === "Yes" ? "Y" : "N", // ✅ Added hotel transport request
+        hotel_name: formData2?.hotel || "", // ✅ Added hotel name
+        booking_nameinhotel: formData2?.bookingName || "", // ✅ Added booking name in hotel
       };
 
       // Determine which endpoint to use based on payment method
       const isAgentPayment = selectedAgent && (paymentMethod === 'bank' || paymentMethod === 'credit_card' || paymentMethod === 'onsite' || paymentMethod === 'saldo');
-      const endpoint = isAgentPayment ? getBookingUrl() : getWithoutPaymentUrl();
+      
+      // Use appropriate endpoint based on payment method
+      let endpoint;
+      if (isAgentPayment) {
+        endpoint = getBookingUrl(); // BCOS (Agent payments) use /booking
+      } else if (paymentMethod === 'midtrans') {
+        endpoint = getWithoutPaymentUrl(); // Midtrans use /booking/without-payment
+      } else if (paymentMethod === 'paypal') {
+        // PayPal uses direct API call to /paypal/create-booking-payment
+        // This will be handled separately in PayPal confirmation
+        endpoint = getWithoutPaymentUrl(); // Placeholder for now
+      } else {
+        endpoint = getWithoutPaymentUrl(); // Draft/without payment
+      }
       
       const response = await fetch(endpoint, {
         method: "POST",
@@ -758,7 +906,7 @@ export default function SurfSchoolBooking() {
         body: JSON.stringify(bookingPayload),
         credentials: "omit",
       });
-  
+      
       const data = await response.json();
   
       if (data.success) {
@@ -785,7 +933,7 @@ export default function SurfSchoolBooking() {
               setSnapToken(data.data.snap_token);
               setShowMidtransModal(true);
               
-              // Show success modal with payment info
+              // Set success data for after payment completion
               const bookingDetails = {
                 date: reservationDays?.[0]?.date || "N/A",
                 duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
@@ -798,28 +946,33 @@ export default function SurfSchoolBooking() {
                 bookingNumber,
                 bookingDetails
               });
-              setShowSuccessModal(true);
+              // Don't show success modal yet - wait for payment completion
             } else {
               showAlert("Booking created but payment token not received. Please contact support.", 'error');
             }
+
           } else if (paymentMethod === 'paypal') {
-            // PayPal payment - show PayPal modal
-            setShowPayPalModal(true);
-            
-            // Show success modal with payment info
-            const bookingDetails = {
+            // PayPal payment - show confirmation modal first
+            const confirmationData = {
+              bookingNumber,
               date: reservationDays?.[0]?.date || "N/A",
               duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
               participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
               totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
-              customerName: formData2?.fullName || "N/A"
+              customerName: formData2?.fullName || "N/A",
+              hotel: formData2?.hotel || "N/A",
+              hotelAddress: formData2?.hotelAddress || "N/A",
+              bookingName: formData2?.bookingName || "N/A",
+              hotelTransfer: formData2?.hotelTransfer || "N/A",
+              packages: Object.values(selectedPackages || {}).map((pkg: any) => ({
+                name: pkg.pkg?.title || "N/A",
+                price: pkg.pkg?.price || 0
+              }))
             };
 
-            setSuccessBookingData({
-              bookingNumber,
-              bookingDetails
-            });
-            setShowSuccessModal(true);
+            setBookingConfirmationData(confirmationData);
+            setShowBookingConfirmationModal(true);
+            return; // Skip the general booking API call for PayPal
           }
         }
       } else {
@@ -919,6 +1072,8 @@ export default function SurfSchoolBooking() {
     dateOfArrival: formData2.dateOfArrival,
     country: formData2.country,
     nationality: formData2.nationality,
+    roomNumber: formData2.roomNumber,
+    hotelTransfer: formData2.hotelTransfer, // ✅ Added hotel transfer
     notes: formData2.notes,
   }
 
@@ -988,27 +1143,7 @@ export default function SurfSchoolBooking() {
     }
   }
 
-  async function checkDrafts(type: string, code: string) {
-    try {
-      const response = await fetch(getCheckDraftsUrl(), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_CONFIG.TOKEN}`,
-        },
-        body: JSON.stringify({ type, code }),
-        credentials: "omit",
-      });
-      const data = await response.json();
-      if (data.success) {
-        return data.data;
-      } else {
-        throw new Error(data.message || "Failed to check drafts");
-      }
-    } catch (err) {
-      throw new Error("Failed to check drafts");
-    }
-  }
+
 
   // Function to reset all form data
   function resetAllData() {
@@ -1034,7 +1169,7 @@ export default function SurfSchoolBooking() {
     setSelectedPackages({});
     setSchedules([]);
     setLoadingSchedules(false);
-    setDraftData(null);
+
     setAgentCode('');
     setSelectedAgent(null);
     setSplitPayments([]);
@@ -1055,6 +1190,7 @@ export default function SurfSchoolBooking() {
       country: "Indonesia",
       nationality: "",
       hotelTransfer: "No",
+      roomNumber: "",
       notes: "",
     });
     setAgreeAndContinue(false);
@@ -1163,7 +1299,7 @@ export default function SurfSchoolBooking() {
       script.async = true;
       
       script.onload = () => {
-        console.log('Midtrans Snap script loaded successfully');
+        // console.log('Midtrans Snap script loaded successfully');
       };
       
       script.onerror = () => {
@@ -1188,31 +1324,45 @@ export default function SurfSchoolBooking() {
       try {
         (window as any).snap.pay(snapToken, {
           onSuccess: function(result: any) {
-            console.log('Payment success:', result);
+            // console.log('Payment success:', result);
             
-            // Start payment status checking
-            const bookingNumber = draftData?.booking_number || "N/A";
-            startPaymentChecking(bookingNumber);
+            // Show success modal directly since Midtrans handles the status
+            setShowSuccessModal(true);
+            setShowMidtransModal(false);
+            setSnapToken(null);
           },
           onPending: function(result: any) {
-            console.log('Payment pending:', result);
+            // console.log('Payment pending:', result);
             
-            // Start payment status checking for pending payments
-            const bookingNumber = draftData?.booking_number || "N/A";
-            startPaymentChecking(bookingNumber);
+            // Show pending modal
+            setShowPaymentPendingModal(true);
+            setShowMidtransModal(false);
+            setSnapToken(null);
           },
           onError: function(result: any) {
-            console.log('Payment error:', result);
-            handlePaymentFailure();
+            // console.log('Payment error:', result);
+            
+            // Show error modal
+            setShowPaymentFailedModal(true);
+            setShowMidtransModal(false);
+            setSnapToken(null);
           },
           onClose: function() {
-            console.log('Payment modal closed');
-            handlePaymentFailure();
+            // console.log('Payment modal closed');
+            
+            // Show error modal
+            setShowPaymentFailedModal(true);
+            setShowMidtransModal(false);
+            setSnapToken(null);
           }
         });
       } catch (error) {
         console.error('Error initializing Midtrans payment:', error);
-        handlePaymentFailure();
+        
+        // Show error modal
+        setShowPaymentFailedModal(true);
+        setShowMidtransModal(false);
+        setSnapToken(null);
       }
     } else {
       console.error('Midtrans Snap not loaded');
@@ -1220,47 +1370,194 @@ export default function SurfSchoolBooking() {
     }
   };
 
+  // Add function to handle PayPal payment confirmation
+  const handlePayPalConfirmation = async () => {
+    if (!bookingConfirmationData) return;
+    
+    setIsProcessingPayPal(true);
+    
+    try {
+      // ✅ Generate fresh booking number for PayPal to avoid duplicates
+      const freshBookingNumber = await generateBookingNumber();
+      
+      // Recalculate values for PayPal
+      const totalQty = (adultCount || 0) + (childrenCount || 0);
+      const gross = totalAmount || 0;
+      const disc = voucherData?.discount_amount ? Math.round(Number(voucherData.discount_amount)) : 0;
+      const discp = voucherData?.discount_type === "percentage" ? Number(voucherData.discount_value || 0) : 0;
+      const nett = voucherData?.net_amount ? Math.round(Number(voucherData.net_amount)) : gross;
+      const voucher_code = voucherData?.voucher_code || "";
+
+      // Calculate USD amount based on exchange rate (assuming 1 USD = 15000 IDR for now)
+      const exchangeRate = 15000; // This should come from CurrencySelector
+      const usd_amount = Math.round(nett / exchangeRate * 100) / 100; // Round to 2 decimal places
+
+      const booking_details = Object.values(selectedPackages || {}).map((pkg: any) => {
+        const packagePrice = pkg.pkg?.price || 0;
+        const packageUsdPrice = Math.round(packagePrice / exchangeRate * 100) / 100;
+        
+        return {
+          code: pkg.pkg?.id ? `PKG${pkg.pkg.id.toString().padStart(3, '0')}` : "",
+          name: pkg.pkg?.title || "",
+          price: packagePrice,
+          qty: 1,
+          gross: packagePrice,
+          disc: 0,
+          discp: 0,
+          nett: packagePrice,
+          price_usd: packageUsdPrice
+        };
+      });
+
+      const booking_persons = [
+        ...(formData?.adults || []).map((a: any) => {
+          const selectedPackage = Object.values(selectedPackages || {}).find((pkg: any) => 
+            pkg.people.includes(a.name)
+          );
+          
+          return { 
+            code: selectedPackage?.pkg?.id ? `PKG${selectedPackage.pkg.id.toString().padStart(3, '0')}` : "",
+            name: a.name, 
+            medical: a.medical || ["no_medical"],
+            medical_other: a.medical_other || ""
+          };
+        }),
+        ...(formData?.children || []).map((c: any) => {
+          const selectedPackage = Object.values(selectedPackages || {}).find((pkg: any) => 
+            pkg.people.includes(c.name)
+          );
+          
+          return { 
+            code: selectedPackage?.pkg?.id ? `PKG${selectedPackage.pkg.id.toString().padStart(3, '0')}` : "",
+            name: c.name, 
+            medical: c.medical || ["no_medical"],
+            medical_other: c.medical_other || ""
+          };
+        }),
+      ];
+
+      const paypalBookingData = {
+        booking_no: freshBookingNumber, // ✅ Use fresh booking number instead of cached one
+        date: reservationDays?.[0]?.date || new Date().toISOString().split('T')[0],
+        type: 'W', // Walk-in
+        agent: 'N', // No agent
+        member_type: 'I', // Individual
+        qty: totalQty,
+        gross: gross,
+        disc: disc,
+        discp: discp,
+        nett: nett,
+        usd_amount: usd_amount,
+        booking_details: booking_details,
+        booking_persons: booking_persons,
+        voucher_code: voucher_code,
+        currency: 'USD',
+        email: formData2?.email || "", // ✅ Added email from Customer Information
+        phone: formData2?.mobilePhone || "", // ✅ Added phone from Customer Information
+        country: formData2?.country || "", // ✅ Added country from Customer Information
+        room_number: formData2?.roomNumber || "", // ✅ Added room number from Customer Information
+        hotel_transport_requested: formData2?.hotelTransfer === "Yes" ? "Y" : "N", // ✅ Added hotel transport request
+        hotel_name: formData2?.hotel || "", // ✅ Added hotel name
+        booking_nameinhotel: formData2?.bookingName || "" // ✅ Added booking name in hotel
+      };
+
+      const paypalResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/create-booking-payment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_CONFIG.TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(paypalBookingData)
+      });
+
+      const paypalData = await paypalResponse.json();
+
+              if (paypalData.success) {
+          // Close confirmation modal
+          setShowBookingConfirmationModal(false);
+          
+          // ✅ Redirect to PayPal approval URL
+          if (paypalData.data?.approval_url) {
+            // Show success message before redirect
+            showAlert('PayPal payment created successfully! Redirecting to PayPal...', 'success');
+            
+            // Redirect to PayPal approval URL
+            window.open(paypalData.data.approval_url, '_blank');
+            
+            // Optional: Show booking details
+            console.log('PayPal Payment Details:', {
+              booking_no: paypalData.data.booking_no,
+              payment_id: paypalData.data.payment_id,
+              amount: paypalData.data.amount,
+              usd_amount: paypalData.data.usd_amount,
+              currency: paypalData.data.currency,
+              status: paypalData.data.status
+            });
+          } else {
+            showAlert('PayPal approval URL not received', 'error');
+          }
+        } else {
+          // Handle specific error cases from documentation
+          if (paypalData.message?.includes('already exists')) {
+            showAlert('Payment processing error. Please try again.', 'error');
+          } else if (paypalData.message?.includes('active PayPal payment')) {
+            showAlert('Booking already has an active PayPal payment', 'error');
+          } else if (paypalData.errors) {
+            // Handle validation errors
+            const errorMessages = Object.values(paypalData.errors).flat().join(', ');
+            showAlert(`Validation error: ${errorMessages}`, 'error');
+          } else {
+            showAlert(paypalData.message || 'Failed to create PayPal payment', 'error');
+          }
+        }
+    } catch (error) {
+      console.error('Error creating PayPal payment:', error);
+      showAlert('Failed to create PayPal payment. Please try again.', 'error');
+    } finally {
+      setIsProcessingPayPal(false);
+    }
+  };
+
   // Add function to handle PayPal payment
   const handlePayPalPayment = async (paymentDetails: any, bookingNumber: string) => {
     try {
-      console.log('PayPal payment details:', paymentDetails);
+      // console.log('PayPal payment details:', paymentDetails);
       
-      // Here you would typically send the payment details to your backend
-      // to verify and process the payment
-      const response = await fetch(getPaymentStatusUrl(), {
+      // Execute PayPal payment using backend API
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/execute-payment`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${API_CONFIG.TOKEN}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          booking_number: bookingNumber,
-          payment_id: paymentDetails.id,
-          payment_status: 'success',
-          payment_method: 'paypal'
+          paymentId: paymentDetails.id,
+          PayerID: paymentDetails.payer.payer_id,
+          booking_no: bookingNumber
         })
       });
 
       const data = await response.json();
       
       if (data.success) {
-        // Show success modal
-        const bookingDetails = {
-          date: reservationDays?.[0]?.date || "N/A",
-          duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
-          participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
-          totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
-          customerName: formData2?.fullName || "N/A"
-        };
+        // PayPal payment success - don't show success modal
+        // const bookingDetails = {
+        //   date: reservationDays?.[0]?.date || "N/A",
+        //   duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
+        //   participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
+        //   totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
+        //   customerName: formData2?.fullName || "N/A"
+        // };
 
-        setSuccessBookingData({
-          bookingNumber,
-          bookingDetails
-        });
-        setShowSuccessModal(true);
+        // setSuccessBookingData({
+        //   bookingNumber,
+        //   bookingDetails
+        // });
+        // setShowSuccessModal(true);
         setShowPayPalModal(false);
+        showAlert('PayPal payment completed successfully!', 'success');
       } else {
-        showAlert('Payment verification failed. Please contact support.', 'error');
+        showAlert(data.message || 'Payment verification failed. Please contact support.', 'error');
       }
     } catch (error) {
       console.error('Error processing PayPal payment:', error);
@@ -1268,96 +1565,9 @@ export default function SurfSchoolBooking() {
     }
   };
 
-  // Add function to check payment status
-  const checkPaymentStatus = async (bookingNumber: string) => {
-    try {
-      const response = await fetch(getPaymentStatusUrl(), {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${API_CONFIG.TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          booking_number: bookingNumber
-        })
-      });
 
-      const data = await response.json();
-      
-      if (data.success) {
-        const status = data.data.status;
-        setPaymentStatus(status);
-        
-        // Show specific modals based on status
-        if (status === 'success' || status === 'settlement') {
-          stopPaymentChecking();
-          setShowPaymentSettlementModal(true);
-          setShowMidtransModal(false);
-          setSnapToken(null);
-        } else if (status === 'expired') {
-          stopPaymentChecking();
-          setShowPaymentExpiredModal(true);
-          setShowMidtransModal(false);
-          setSnapToken(null);
-        } else if (status === 'deny') {
-          stopPaymentChecking();
-          setShowPaymentDeniedModal(true);
-          setShowMidtransModal(false);
-          setSnapToken(null);
-        } else if (status === 'pending') {
-          // Keep checking, don't show modal yet
-          setShowPaymentPendingModal(true);
-        }
-      } else {
-        console.error('Failed to check payment status:', data.message);
-      }
-    } catch (error) {
-      console.error('Error checking payment status:', error);
-    }
-  };
 
-  // Add function to handle payment failure
-  const handlePaymentFailure = () => {
-    stopPaymentChecking();
-    setShowPaymentFailedModal(true);
-    setShowMidtransModal(false);
-    setSnapToken(null);
-  };
 
-  // Add function to start payment checking
-  const startPaymentChecking = (bookingNumber: string) => {
-    setIsCheckingPayment(true);
-    setPaymentStatus('pending');
-    
-    // Check immediately
-    checkPaymentStatus(bookingNumber);
-    
-    // Set up interval to check every 5 seconds
-    const interval = setInterval(() => {
-      checkPaymentStatus(bookingNumber);
-    }, 5000);
-    
-    setPaymentCheckInterval(interval);
-  };
-
-  // Add function to stop payment checking
-  const stopPaymentChecking = () => {
-    setIsCheckingPayment(false);
-    setPaymentStatus('');
-    if (paymentCheckInterval) {
-      clearInterval(paymentCheckInterval);
-      setPaymentCheckInterval(null);
-    }
-  };
-
-  // Cleanup interval on component unmount
-  useEffect(() => {
-    return () => {
-      if (paymentCheckInterval) {
-        clearInterval(paymentCheckInterval);
-      }
-    };
-  }, [paymentCheckInterval]);
 
   // Real-time validation function
   function validateField(fieldName: string, value: any, context?: any) {
@@ -1556,7 +1766,11 @@ export default function SurfSchoolBooking() {
             <LessonsToursSpecifications
               currency={currency}
               setCurrency={handleSetCurrency}
-              currencyOptions={currencyOptions}
+              onRateChange={(rate) => {
+                // Handle exchange rate change
+                // console.log('Exchange rate changed:', rate);
+              }}
+              paymentMethod={paymentMethod}
               selectedActivities={selectedActivities}
               setSelectedActivities={setSelectedActivities}
               duration={duration}
@@ -1653,6 +1867,10 @@ export default function SurfSchoolBooking() {
               splitPayments={splitPayments}
               setSplitPayments={setSplitPayments}
               loadingAgent={loadingAgent}
+              currency={currency}
+              setCurrency={handleSetCurrency}
+              onRateChange={(rate) => {
+              }}
             />
           </div>
         </div>
@@ -1710,7 +1928,7 @@ export default function SurfSchoolBooking() {
                 <div>
                   <span className="text-gray-600">Booking:</span>
                   <div className="font-semibold text-gray-900">
-                    {draftData?.booking_number || "N/A"}
+                    {successBookingData?.bookingNumber || "N/A"}
                   </div>
                 </div>
               </div>
@@ -1727,44 +1945,7 @@ export default function SurfSchoolBooking() {
               </p>
             </div>
 
-            {/* Payment Status Checker */}
-            {isCheckingPayment && (
-              <div className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="font-semibold text-blue-800">Checking Payment Status</span>
-                </div>
-                <div className="text-sm text-blue-700">
-                  {paymentStatus === 'pending' && (
-                    <div className="flex items-center gap-2">
-                      <span>⏳</span>
-                      <span>Payment is being processed...</span>
-                    </div>
-                  )}
-                  {paymentStatus === 'success' && (
-                    <div className="flex items-center gap-2 text-green-600">
-                      <span>✅</span>
-                      <span>Payment completed successfully!</span>
-                    </div>
-                  )}
-                  {paymentStatus === 'expired' && (
-                    <div className="flex items-center gap-2 text-red-600">
-                      <span>❌</span>
-                      <span>Payment expired. Please try again.</span>
-                    </div>
-                  )}
-                  {paymentStatus === 'deny' && (
-                    <div className="flex items-center gap-2 text-red-600">
-                      <span>❌</span>
-                      <span>Payment was denied. Please try again.</span>
-                    </div>
-                  )}
-                </div>
-                <div className="text-xs text-blue-600 mt-2">
-                  Checking every 5 seconds...
-                </div>
-              </div>
-            )}
+
 
             <div className="space-y-3">
               <button
@@ -1781,7 +1962,6 @@ export default function SurfSchoolBooking() {
               
               <button
                 onClick={() => {
-                  stopPaymentChecking();
                   setShowMidtransModal(false);
                   setSnapToken(null);
                 }}
@@ -1803,6 +1983,8 @@ export default function SurfSchoolBooking() {
           </div>
         </div>
       )}
+
+
 
              {/* Payment Failed Modal */}
        {showPaymentFailedModal && (
@@ -1891,7 +2073,7 @@ export default function SurfSchoolBooking() {
                  <div>
                    <span className="text-gray-600">Booking Number:</span>
                    <div className="font-bold text-gray-900">
-                     {draftData?.booking_number || "N/A"}
+                     {successBookingData?.bookingNumber || "N/A"}
                    </div>
                  </div>
                  <div>
@@ -1934,26 +2116,14 @@ export default function SurfSchoolBooking() {
                    setShowMidtransModal(false);
                    setSnapToken(null);
                    
-                   // Show success modal with booking details
-                   const bookingDetails = {
-                     date: reservationDays?.[0]?.date || "N/A",
-                     duration: duration === "1-day" ? "1 Day" : duration === "2-days" ? "2 Days" : "3 Days",
-                     participants: `${adultCount > 0 ? `${adultCount} Adult` : ''}${adultCount > 0 && childrenCount > 0 ? ' | ' : ''}${childrenCount > 0 ? `${childrenCount} Children` : ''}`,
-                     totalAmount: getDisplayPrice(voucherData?.net_amount || totalAmount),
-                     customerName: formData2?.fullName || "N/A"
-                   };
-
-                   setSuccessBookingData({
-                     bookingNumber: draftData?.booking_number || "N/A",
-                     bookingDetails
-                   });
-                   setShowSuccessModal(true);
+                   // Reset form for new booking
+                   resetAllData();
                  }}
                  className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105"
                >
                  <span className="flex items-center justify-center gap-2">
                    <span>🎉</span>
-                   <span>View Booking Details</span>
+                   <span>Start New Booking</span>
                  </span>
                </button>
                <button
@@ -2021,11 +2191,10 @@ export default function SurfSchoolBooking() {
                    setShowPaymentPendingModal(false);
                    setShowMidtransModal(false);
                    setSnapToken(null);
-                   stopPaymentChecking();
                  }}
                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors"
                >
-                 Close & Stop Monitoring
+                 Close
                </button>
              </div>
            </div>
@@ -2174,6 +2343,17 @@ export default function SurfSchoolBooking() {
           setShowPayPalModal(false);
         }}
       />
+
+      {/* Booking Confirmation Modal */}
+      {showBookingConfirmationModal && bookingConfirmationData && (
+        <BookingConfirmationModal
+          isOpen={showBookingConfirmationModal}
+          onClose={() => setShowBookingConfirmationModal(false)}
+          onConfirm={handlePayPalConfirmation}
+          bookingData={bookingConfirmationData}
+          isLoading={isProcessingPayPal}
+        />
+      )}
     </div>
   )
 } 

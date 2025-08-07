@@ -146,13 +146,13 @@ Total Amount: ${bookingDetails?.totalAmount || 'N/A'}
 
         {/* Action Buttons */}
         <div className="space-y-2 sm:space-y-3">
-          <Button
+          {/* <Button
             onClick={downloadBookingDetails}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-2.5"
           >
             <Download size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
             Download Details
-          </Button>
+          </Button> */}
           
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             <Button

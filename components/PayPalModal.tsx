@@ -24,6 +24,7 @@ export default function PayPalModal({
   onSuccess,
   onError
 }: PayPalModalProps) {
+  const [approvalUrl, setApprovalUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +113,20 @@ export default function PayPalModal({
               <span className="ml-2 text-sm text-gray-600">
                 Processing payment...
               </span>
+            </div>
+          ) : approvalUrl ? (
+            <div className="space-y-4">
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-4">
+                  Click the button below to complete your PayPal payment
+                </p>
+                <button
+                  onClick={() => window.open(approvalUrl, '_blank')}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                >
+                  Complete PayPal Payment
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">

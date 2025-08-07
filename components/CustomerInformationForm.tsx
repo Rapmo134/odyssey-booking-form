@@ -2,6 +2,13 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "./ui/textarea"
 import { Calendar } from "lucide-react"
+import { useEffect, useState } from "react"
+import { API_CONFIG, getMasterDataUrl } from "@/lib/config"
+
+interface Country {
+  code: string
+  name: string
+}
 
 interface CustomerInformationFormProps {
   formData2: any
@@ -11,6 +18,62 @@ interface CustomerInformationFormProps {
 }
 
 export default function CustomerInformationForm({ formData2, setFormData2, errors, validateField }: CustomerInformationFormProps) {
+  const [countries, setCountries] = useState<Country[]>([])
+  const [loadingCountries, setLoadingCountries] = useState(true)
+
+  // Fetch countries from API
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch(getMasterDataUrl(), {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${API_CONFIG.TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          
+          if (data.success && data.data?.countries) {
+            setCountries(data.data.countries)
+          } else {
+            // Fallback to default countries if API fails
+            setCountries([
+              { code: 'ID', name: 'INDONESIA' },
+              { code: 'MY', name: 'MALAYSIA' },
+              { code: 'SG', name: 'SINGAPORE' },
+              { code: 'TH', name: 'THAILAND' },
+              { code: 'AU', name: 'AUSTRALIA' }
+            ])
+          }
+        } else {
+          // Fallback to default countries if API fails
+          setCountries([
+            { code: 'ID', name: 'INDONESIA' },
+            { code: 'MY', name: 'MALAYSIA' },
+            { code: 'SG', name: 'SINGAPORE' },
+            { code: 'TH', name: 'THAILAND' },
+            { code: 'AU', name: 'AUSTRALIA' }
+          ])
+        }
+      } catch (error) {
+        // Fallback to default countries if API fails
+        setCountries([
+          { code: 'ID', name: 'INDONESIA' },
+          { code: 'MY', name: 'MALAYSIA' },
+          { code: 'SG', name: 'SINGAPORE' },
+          { code: 'TH', name: 'THAILAND' },
+          { code: 'AU', name: 'AUSTRALIA' }
+        ])
+      } finally {
+        setLoadingCountries(false)
+      }
+    }
+
+    fetchCountries()
+  }, [])
   return (
     <>
       {/* Header */}
@@ -85,7 +148,7 @@ export default function CustomerInformationForm({ formData2, setFormData2, error
 
             {/* Mobile Phone */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Mobile Phone</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Mobile Phone (Whatsapp)</label>
               <Input
                 value={formData2.mobilePhone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,9 +214,30 @@ export default function CustomerInformationForm({ formData2, setFormData2, error
               />
               {errors.bookingName && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.bookingName}</p>}
             </div>
+            
+            {/* Room Number */}
+            <div>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                Room number <span className="text-red-500">*</span>
+              </label>
+              <p className="text-xs text-gray-500 mb-2 sm:mb-3">
+                Please put "X" if there is none.
+              </p>
+              <Input
+                value={formData2.roomNumber || ""}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  setFormData2({ ...formData2, roomNumber: value });
+                  validateField('roomNumber', value);
+                }}
+                placeholder="Enter room number"
+                className="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              />
+              {errors.roomNumber && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.roomNumber}</p>}
+            </div>
 
             {/* Date of Arrival */}
-            <div>
+            {/* <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Date of Arrival</label>
               <div className="relative">
                 <Input
@@ -165,7 +249,7 @@ export default function CustomerInformationForm({ formData2, setFormData2, error
                 <Calendar className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
               </div>
               {errors.dateOfArrival && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.dateOfArrival}</p>}
-            </div>
+            </div> */}
           </div>
 
           {/* Right Column */}
@@ -176,14 +260,15 @@ export default function CustomerInformationForm({ formData2, setFormData2, error
               <select
                 value={formData2.country}
                 onChange={(e) => setFormData2({ ...formData2, country: e.target.value })}
-                className="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={loadingCountries}
+                className="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
-                <option value="Indonesia">Indonesia</option>
-                <option value="Malaysia">Malaysia</option>
-                <option value="Singapore">Singapore</option>
-                <option value="Thailand">Thailand</option>
-                <option value="Australia">Australia</option>
-                <option value="Other">Other</option>
+                <option value="">{loadingCountries ? "Loading countries..." : "Select country"}</option>
+                {countries.map((country, index) => (
+                  <option key={`${country.code}-${index}`} value={country.name}>
+                    {country.name}
+                  </option>
+                ))}
               </select>
               {errors.country && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.country}</p>}
             </div>
@@ -202,19 +287,55 @@ export default function CustomerInformationForm({ formData2, setFormData2, error
             {/* Hotel Transfer Service */}
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                Hotel transfer service? <span className="text-red-500">*</span>
+                Would you like to apply for our shared hotel transport service? <span className="text-red-500">*</span>
               </label>
-              <select
-                value={formData2.hotelTransfer}
-                onChange={(e) => {
-                  setFormData2({ ...formData2, hotelTransfer: e.target.value });
-                  validateField('hotelTransfer', e.target.value);
-                }}
-                className="w-full px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
+              
+              {/* Transportation Terms and Conditions */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                <h4 className="text-xs sm:text-sm font-semibold text-blue-800 mb-2 sm:mb-3">
+                  Transportation Terms and Conditions:
+                </h4>
+                <ol className="text-xs sm:text-xs text-blue-700 space-y-1 sm:space-y-2 list-decimal list-inside">
+                  <li>Transportation service is not guaranteed unless it is confirmed by us.</li>
+                  <li>Hotel transfer service may not be available for last minute bookings less than 24 hours.</li>
+                  <li>Hotel transfer service is included for the following areas only; Kuta, Legian, Seminyak, Jimbaran, and Nusa Dua. Please reconfirm with us for other areas (an extra fee may apply).</li>
+                  <li>Hotel transfer service is only provided in the lobby of registered hotels or villas, not applicable for public areas.</li>
+                </ol>
+              </div>
+
+              {/* Radio Buttons */}
+              <div className="space-y-2 sm:space-y-3">
+                <label className="flex items-center space-x-2 sm:space-x-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="hotelTransfer"
+                    value="Yes"
+                    checked={formData2.hotelTransfer === "Yes"}
+                    onChange={(e) => {
+                      setFormData2({ ...formData2, hotelTransfer: e.target.value });
+                      validateField('hotelTransfer', e.target.value);
+                    }}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                  />
+                  <span className="text-xs sm:text-sm text-gray-700">Yes</span>
+                </label>
+                
+                <label className="flex items-center space-x-2 sm:space-x-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="hotelTransfer"
+                    value="No"
+                    checked={formData2.hotelTransfer === "No"}
+                    onChange={(e) => {
+                      setFormData2({ ...formData2, hotelTransfer: e.target.value });
+                      validateField('hotelTransfer', e.target.value);
+                    }}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                  />
+                  <span className="text-xs sm:text-sm text-gray-700">No</span>
+                </label>
+              </div>
+              
               {errors.hotelTransfer && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.hotelTransfer}</p>}
             </div>
 

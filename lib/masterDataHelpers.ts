@@ -8,9 +8,9 @@ export const setMasterData = (data: MasterData) => {
   masterDataStore = data;
   
   // Console log untuk debugging
-  console.log('masterDataHelpers - setMasterData called with:', data);
-  console.log('masterDataHelpers - packages count:', data.packages?.length || 0);
-  console.log('masterDataHelpers - agents count:', data.agents?.length || 0);
+  // console.log('masterDataHelpers - setMasterData called with:', data);
+  // console.log('masterDataHelpers - packages count:', data.packages?.length || 0);
+  // console.log('masterDataHelpers - agents count:', data.agents?.length || 0);
 };
 
 // Getter untuk master data
@@ -56,8 +56,8 @@ export const getRecommendedPackagesForPerson = (criteria: PersonCriteria) => {
   const packages = getPackages();
 
   // Console log untuk debugging
-  console.log('masterDataHelpers - getRecommendedPackagesForPerson called with criteria:', criteria);
-  console.log('masterDataHelpers - total packages available:', packages.length);
+  // console.log('masterDataHelpers - getRecommendedPackagesForPerson called with criteria:', criteria);
+  // console.log('masterDataHelpers - total packages available:', packages.length);
 
   const filteredPackages = packages.filter(pkg => {
     if (pkg.active !== 'Y') return false;
@@ -90,8 +90,8 @@ export const getRecommendedPackagesForPerson = (criteria: PersonCriteria) => {
     return true;
   });
 
-  console.log('masterDataHelpers - filtered packages count:', filteredPackages.length);
-  console.log('masterDataHelpers - filtered packages:', filteredPackages);
+  // console.log('masterDataHelpers - filtered packages count:', filteredPackages.length);
+  // console.log('masterDataHelpers - filtered packages:', filteredPackages);
 
   return filteredPackages;
 };
@@ -100,7 +100,7 @@ export const getRecommendedPackagesForPerson = (criteria: PersonCriteria) => {
 // Helper untuk konversi package dari API ke format yang dibutuhkan UI
 export const convertPackageToUIFormat = (pkg: Package) => {
   // Console log untuk debugging
-  console.log('masterDataHelpers - convertPackageToUIFormat called with:', pkg);
+  // console.log('masterDataHelpers - convertPackageToUIFormat called with:', pkg);
   
   const converted = {
     // Basic info
@@ -139,7 +139,7 @@ export const convertPackageToUIFormat = (pkg: Package) => {
     includes: ["Equipment", "Insurance", "Photos"], // Default includes
   };
 
-  console.log('masterDataHelpers - converted package:', converted);
+  // console.log('masterDataHelpers - converted package:', converted);
   return converted;
 };
 

@@ -75,7 +75,7 @@ export default function ParticipantForm({
 }: ParticipantFormProps) {
 
   // Console log untuk debugging
-  console.log('ParticipantForm - selectedPackages:', selectedPackages);
+  // console.log('ParticipantForm - selectedPackages:', selectedPackages);
   return (
     <>
       {/* Header */}
@@ -159,8 +159,8 @@ export default function ParticipantForm({
               }));
               
               // Console log untuk debugging
-              console.log('ParticipantForm - adultCriteria:', adultCriteria);
-              console.log('ParticipantForm - recommendedFromApi for adult:', recommendedFromApi);
+              // console.log('ParticipantForm - adultCriteria:', adultCriteria);
+              // console.log('ParticipantForm - recommendedFromApi for adult:', recommendedFromApi);
               
               return (
                 <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">
@@ -440,8 +440,8 @@ export default function ParticipantForm({
               }));
               
               // Console log untuk debugging
-              console.log('ParticipantForm - childCriteria:', childCriteria);
-              console.log('ParticipantForm - recommendedFromApi for child:', recommendedFromApi);
+              // console.log('ParticipantForm - childCriteria:', childCriteria);
+              // console.log('ParticipantForm - recommendedFromApi for child:', recommendedFromApi);
               
               return (
                 <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm">

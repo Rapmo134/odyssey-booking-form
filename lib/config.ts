@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8082',
+  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://odyssey.softcomp.io',
   TOKEN: process.env.NEXT_PUBLIC_API_TOKEN || '',
   ENDPOINTS: {
     SCHEDULES: process.env.NEXT_PUBLIC_SCHEDULES_ENDPOINT || '/api/v1/booking/schedules',
@@ -10,7 +10,9 @@ export const API_CONFIG = {
     APPLY_VOUCHER: '/api/v1/booking/apply-voucher',
     GENERATE_NUMBER: '/api/v1/booking/generate-number',
     CHECK_DRAFTS: '/api/v1/booking/check-drafts',
-    PAYMENT_STATUS: '/api/v1/booking/payment-status',
+    PAYMENT_STATUS: '/api/v1/booking/payment/status',
+    PAYMENT_POLL: '/api/v1/booking/payment/poll',
+    UPDATE_PAYMENT_STATUS: '/api/v1/booking/update-payment-status',
   }
 };
 
@@ -32,6 +34,17 @@ export const PAYPAL_CONFIG = {
     ? 'https://www.paypal.com'
     : 'https://www.sandbox.paypal.com',
   SCRIPT_URL: 'https://www.paypal.com/sdk/js'
+};
+
+// Exchange Rate Configuration
+export const EXCHANGE_RATE_CONFIG = {
+  API_KEY: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY || '',
+  EXCHANGE_RATE_BASE_URL: 'https://api.exchangerate-api.com/v4/latest',
+  CURRENCY_FREAKS_URL: 'https://api.currencyfreaks.com/v2.0/rates',
+  FALLBACK_RATES: {
+    USD: 0.000065, // 1 IDR = 0.000065 USD (approximate)
+    IDR: 1
+  }
 };
 
 // Build full URL for endpoints
@@ -77,4 +90,14 @@ export const getCheckDraftsUrl = () => {
 // Get payment status URL
 export const getPaymentStatusUrl = () => {
   return getApiUrl(API_CONFIG.ENDPOINTS.PAYMENT_STATUS);
+};
+
+// Get update payment status URL
+export const getUpdatePaymentStatusUrl = () => {
+  return getApiUrl(API_CONFIG.ENDPOINTS.UPDATE_PAYMENT_STATUS);
+};
+
+// Get payment poll URL
+export const getPaymentPollUrl = () => {
+  return getApiUrl(API_CONFIG.ENDPOINTS.PAYMENT_POLL);
 };

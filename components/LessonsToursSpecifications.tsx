@@ -18,7 +18,8 @@ const durationOptions = [
 interface LessonsToursSpecificationsProps {
   currency: string;
   setCurrency: (currency: string) => void;
-  currencyOptions: Array<{ code: string; label: string; rate: number }>;
+  onRateChange?: (rate: number) => void;
+  paymentMethod?: string;
   selectedActivities: Record<ActivityKey, boolean>;
   setSelectedActivities: (activities: Record<ActivityKey, boolean> | ((prev: Record<ActivityKey, boolean>) => Record<ActivityKey, boolean>)) => void;
   duration: string;
@@ -33,7 +34,8 @@ interface LessonsToursSpecificationsProps {
 export default function LessonsToursSpecifications({
   currency,
   setCurrency,
-  currencyOptions,
+  onRateChange,
+  paymentMethod,
   selectedActivities,
   setSelectedActivities,
   duration,
@@ -64,7 +66,13 @@ export default function LessonsToursSpecifications({
       <div className="space-y-6 sm:space-y-8">
         {/* Currency Selector */}
         {/* <div className="mb-4">
-          <CurrencySelector currency={currency} setCurrency={setCurrency} currencyOptions={currencyOptions} />
+          <CurrencySelector 
+            currency={currency} 
+            setCurrency={setCurrency} 
+            onRateChange={onRateChange}
+            paymentMethod={paymentMethod}
+            disabled={paymentMethod === 'paypal'}
+          />
         </div> */}
 
         {/* Surfing Activities */}

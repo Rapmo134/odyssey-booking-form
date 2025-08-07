@@ -25,8 +25,8 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
   const [showModal, setShowModal] = useState(false);
 
   // Console log untuk debugging
-  console.log('RecommendationCard - rec:', rec);
-  console.log('RecommendationCard - rec.pkg:', rec.pkg);
+  // console.log('RecommendationCard - rec:', rec);
+  // console.log('RecommendationCard - rec.pkg:', rec.pkg);
 
   return (
     <>
